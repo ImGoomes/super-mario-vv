@@ -1,5 +1,8 @@
 # LDTS_1 05 - Super Mario
 
+> **⚠ Warning:** This project was **not developed by me**. 
+> My contribution to this repository is solely focused on developing and adding **tests** to enhance the project's robustness and reliability.
+
 ### Game Description
 
 Our current project is centered around a text-based replica of the iconic Super Mario Bros game.
