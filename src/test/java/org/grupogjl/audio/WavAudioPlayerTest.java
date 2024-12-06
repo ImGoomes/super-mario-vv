@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class WavAudioPlayerTest {
+class WavAudioPlayerTest {
 
     @Test
     void testPlaySound_ValidFile() {
