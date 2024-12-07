@@ -1,12 +1,10 @@
 package org.grupogjl.commands;
 
 import org.grupogjl.Game;
-import org.grupogjl.model.game.elements.menu.MenuModel;
 import org.grupogjl.state.StateMenu;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class PauseCommandTests {
@@ -18,7 +16,8 @@ class PauseCommandTests {
     @BeforeEach
     void setup() {
         pauseCommand = new PauseCommand();
-        mockGame = mock(Game.class}
+        mockGame = mock(Game.class);
+    }
 
     @Test
     void testExecuteSetsGameStateToPause() {
