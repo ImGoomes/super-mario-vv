@@ -11,12 +11,14 @@ import static org.mockito.Mockito.*;
 
 class InstructionsCommandTests {
 
+    private InstructionsCommand instructionsCommand;
     private Game mockGame;
     private StateMenu mockStateMenu;
     private MenuModel mockModel;
 
     @BeforeEach
     void setup() {
+        instructionsCommand = new InstructionsCommand();
         mockGame = mock(Game.class);
         mockStateMenu = mock(StateMenu.class);
         mockModel = mock(MenuModel.class);
@@ -45,7 +47,6 @@ class InstructionsCommandTests {
 
     @Test
     void testExecuteSetsInstructionsWithNullGame() {
-        InstructionsCommand command = new InstructionsCommand();
-        assertThrows(NullPointerException.class, () -> command.execute(null), "Executing with a null game should throw a NullPointerException.");
+        assertThrows(NullPointerException.class, () -> instructionsCommand.execute(null), "Executing with a null game should throw a NullPointerException.");
     }
 }
