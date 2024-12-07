@@ -26,7 +26,7 @@ class ExitGameCommandTests {
     }
 
     @Test
-    void testExecuteSetsReus() {
+    void testExecuteSetsExitGameNullGame() {
         assertThrows(NullPointerException.class, () -> exitGameCommand.execute(null), "Executing with a null game should throw a NullPointerException.");
     }
 }

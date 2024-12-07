@@ -43,7 +43,7 @@ class StartGameCommandTests {
     }
 
     @Test
-    void testExecuteSetsNullGame() {
+    void testExecuteSetsStartGameNullGame() {
         assertThrows(NullPointerException.class, () -> startGameCommand.execute(null), "Executing with a null game should throw a NullPointerException.");
     }
 }

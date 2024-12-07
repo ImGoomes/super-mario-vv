@@ -26,7 +26,7 @@ class ExitToMenuCommandTests {
     }
 
     @Test
-    void testExecuteSetsReus() {
+    void testExecuteSetsExitToMenuNullGame() {
         assertThrows(NullPointerException.class, () -> exitToMenuCommand.execute(null), "Executing with a null game should throw a NullPointerException.");
     }
 }

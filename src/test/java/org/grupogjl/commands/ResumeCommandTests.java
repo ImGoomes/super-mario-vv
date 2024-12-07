@@ -30,7 +30,7 @@ class ResumeCommandTests {
     }
 
     @Test
-    void testExecuteSetsReus() {
+    void testExecuteSetsResumeNullGame() {
         assertThrows(NullPointerException.class, () -> resumeCommand.execute(null), "Executing with a null game should throw a NullPointerException.");
     }
 }

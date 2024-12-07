@@ -29,7 +29,7 @@ class GameOverCommandTests {
     }
 
     @Test
-    void testExecuteSetsReus() {
+    void testExecuteSetsGameOverNullGame() {
         assertThrows(NullPointerException.class, () -> gameOverCommand.execute(null), "Executing with a null game should throw a NullPointerException.");
     }
 }

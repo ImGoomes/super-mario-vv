@@ -27,7 +27,7 @@ class PauseCommandTests {
     }
 
     @Test
-    void testExecuteSetsReus() {
+    void testExecuteSetsPauseNullGame() {
         assertThrows(NullPointerException.class, () -> pauseCommand.execute(null), "Executing with a null game should throw a NullPointerException.");
     }
 }
