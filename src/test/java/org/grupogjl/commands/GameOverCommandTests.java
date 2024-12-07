@@ -5,6 +5,7 @@ import org.grupogjl.state.StateGame;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class GameOverCommandTests {
@@ -25,5 +26,10 @@ class GameOverCommandTests {
     void testExecuteSetsGameOver() {
         gameOverCommand.execute(mockGame);
         verify(mockStateGame, times(1)).setGameOver(true);
+    }
+
+    @Test
+    void testExecuteSetsReus() {
+        assertThrows(NullPointerException.class, () -> gameOverCommand.execute(null), "Executing with a null game should throw a NullPointerException.");
     }
 }

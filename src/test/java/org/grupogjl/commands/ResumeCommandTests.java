@@ -5,6 +5,7 @@ import org.grupogjl.state.StatePause;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class ResumeCommandTests {
@@ -26,5 +27,10 @@ class ResumeCommandTests {
     void testExecuteSetsGameStateToResume() {
         resumeCommand.execute(mockGame);
         verify(mockGame, times(1)).setStateGame(mockStatePause.getParent());
+    }
+
+    @Test
+    void testExecuteSetsReus() {
+        assertThrows(NullPointerException.class, () -> resumeCommand.execute(null), "Executing with a null game should throw a NullPointerException.");
     }
 }
