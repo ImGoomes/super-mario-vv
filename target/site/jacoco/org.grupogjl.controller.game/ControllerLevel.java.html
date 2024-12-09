@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ControllerLevel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mario</a> &gt; <a href="index.source.html" class="el_package">org.grupogjl.controller.game</a> &gt; <span class="el_source">ControllerLevel.java</span></div><h1>ControllerLevel.java</h1><pre class="source lang-java linenums">package org.grupogjl.controller.game;
+
+
+import org.grupogjl.controller.game.blocks.ControllerBlocks;
+import org.grupogjl.controller.game.physicalobjects.ControllerEnemy;
+import org.grupogjl.controller.game.physicalobjects.ControllerFireBall;
+import org.grupogjl.controller.game.physicalobjects.ControllerMario;
+import org.grupogjl.controller.game.surprises.ControllerSurprises;
+import org.grupogjl.gui.GeneralGui;
+import org.grupogjl.model.game.elements.Mario;
+import org.grupogjl.model.game.elements.blocks.BuildingBlock;
+import org.grupogjl.model.game.elements.camera.Camera;
+import org.grupogjl.model.game.elements.generalobjects.GameObject;
+import org.grupogjl.model.game.elements.generalobjects.PhysicalObject;
+import org.grupogjl.model.game.elements.generalobjects.StaticObject;
+import org.grupogjl.model.game.elements.level.Level;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+<span class="fc" id="L22">public class ControllerLevel {</span>
+<span class="fc" id="L23">    private ControllerMario controllerMario = new ControllerMario();</span>
+<span class="fc" id="L24">    private ControllerEnemy controllerEnemy = new ControllerEnemy();</span>
+<span class="fc" id="L25">    private ControllerBlocks controllerBlocks = new ControllerBlocks();</span>
+<span class="fc" id="L26">    private ControllerSurprises controllerSurprises = new ControllerSurprises();</span>
+<span class="fc" id="L27">    private ControllerFireBall controllerFireBall = new ControllerFireBall();</span>
+    public ControllerMario getControllerMario() {
+<span class="nc" id="L29">        return controllerMario;</span>
+    }
+    public ControllerEnemy getControllerEnemy() {
+<span class="nc" id="L32">        return controllerEnemy;</span>
+    }
+    public ControllerBlocks getControllerBlocks() {
+<span class="nc" id="L35">        return controllerBlocks;</span>
+    }
+    public ControllerSurprises getControllerSurprises() {
+<span class="nc" id="L38">        return controllerSurprises;</span>
+    }
+    public ControllerFireBall getControllerFireBall() {
+<span class="nc" id="L41">        return controllerFireBall;</span>
+    }
+    public void step(Level level, GeneralGui.ACTION action, long time) {
+<span class="nc" id="L44">        Mario mario = level.getMario();</span>
+<span class="nc" id="L45">        Camera camera = level.getCamera();</span>
+<span class="nc" id="L46">        List&lt;GameObject&gt; objects = level.getObjects();</span>
+<span class="nc" id="L47">        getControllerFireBall().step(level, action, time);</span>
+<span class="nc" id="L48">        getControllerMario().step(level, action, time);</span>
+<span class="nc" id="L49">        getControllerEnemy().step(level, time);</span>
+<span class="nc" id="L50">        getControllerSurprises().step(level, action, time);</span>
+<span class="nc" id="L51">        getControllerBlocks().step(level, action, time);</span>
+<span class="nc" id="L52">        checkCollisions(mario, objects, camera);</span>
+<span class="nc" id="L53">    }</span>
+    public void checkCollisions(Mario mario, List&lt;GameObject&gt; objects, Camera camera) {
+<span class="nc" id="L55">        CheckPhysicalCollisionsX(mario, objects, camera);</span>
+<span class="nc" id="L56">        CheckPhysicalCollisionsY(mario, objects);</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        for (GameObject object : objects) {</span>
+<span class="nc bnc" id="L58" title="All 2 branches missed.">            if (!(object instanceof StaticObject)) {</span>
+<span class="nc" id="L59">                PhysicalObject physicalObject = (PhysicalObject) object;</span>
+<span class="nc" id="L60">                CheckPhysicalCollisionsX(physicalObject, objects, camera);</span>
+<span class="nc" id="L61">                CheckPhysicalCollisionsY(physicalObject, objects);</span>
+            }
+<span class="nc" id="L63">        }</span>
+<span class="nc" id="L64">    }</span>
+    public void CheckPhysicalCollisionsY(PhysicalObject physicalObject, List&lt;GameObject&gt; objects) {
+<span class="nc" id="L66">        boolean fcol = false, rcol = false, blockbelow = false;</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">        for (GameObject object : objects) {</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">            if (object instanceof BuildingBlock block) {</span>
+<span class="nc bnc" id="L69" title="All 4 branches missed.">                if (physicalObject.getX() &lt; block.getX() + block.getWidth() &amp;&amp; physicalObject.getX() + physicalObject.getWidth() &gt; block.getX()) {</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">                    if (physicalObject.getY() == block.getY() - block.getHeight()) {</span>
+<span class="nc" id="L71">                        blockbelow = true;</span>
+                    }
+                }
+            }
+<span class="nc" id="L75">        }</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        for (GameObject object : objects) {</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">            if (object != physicalObject) {</span>
+<span class="nc bnc" id="L78" title="All 4 branches missed.">                if (physicalObject.getVy() != 0 &amp;&amp; physicalObject.isJumping()) {</span>
+<span class="nc" id="L79">                    float startPosition = physicalObject.getY();</span>
+<span class="nc" id="L80">                    float totalDistance = physicalObject.getVy();</span>
+<span class="nc" id="L81">                    float remainingDistance = totalDistance;</span>
+<span class="nc" id="L82">                    float movementStep = physicalObject.getVy() / 3;</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">                    while (remainingDistance &gt; 0) {</span>
+<span class="nc" id="L84">                        physicalObject.setY(physicalObject.getY() - movementStep);</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">                        if (physicalObject.collidesWith(object)) {</span>
+<span class="nc" id="L86">                            physicalObject.handleCollision(object, 'U');</span>
+<span class="nc" id="L87">                            rcol = true;</span>
+<span class="nc" id="L88">                            break;</span>
+                        }
+<span class="nc" id="L90">                        remainingDistance -= movementStep;</span>
+<span class="nc" id="L91">                        movementStep = Math.min(remainingDistance, physicalObject.getVy() / 3);</span>
+                    }
+<span class="nc bnc" id="L93" title="All 2 branches missed.">                    if (!rcol) {</span>
+<span class="nc" id="L94">                        physicalObject.setY(startPosition);</span>
+                    } else {
+                        break;
+                    }
+<span class="nc bnc" id="L98" title="All 2 branches missed.">                } else if (physicalObject.getVy() != 0) {</span>
+<span class="nc" id="L99">                    float startPosition = physicalObject.getY();</span>
+<span class="nc" id="L100">                    float totalDistance = physicalObject.getVy();</span>
+<span class="nc" id="L101">                    float remainingDistance = totalDistance;</span>
+<span class="nc" id="L102">                    float movementStep = physicalObject.getVy() / 3;</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">                    while (remainingDistance &gt; 0) {</span>
+<span class="nc" id="L104">                        physicalObject.setY(physicalObject.getY() + movementStep);</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">                        if (physicalObject.collidesWith(object)) {</span>
+<span class="nc" id="L106">                            physicalObject.handleCollision(object, 'D');</span>
+<span class="nc" id="L107">                            fcol = true;</span>
+<span class="nc" id="L108">                            break;</span>
+                        }
+<span class="nc" id="L110">                        remainingDistance -= movementStep;</span>
+<span class="nc" id="L111">                        movementStep = Math.min(remainingDistance, physicalObject.getVy() / 3);</span>
+                    }
+<span class="nc bnc" id="L113" title="All 2 branches missed.">                    if (!fcol) {</span>
+<span class="nc" id="L114">                        physicalObject.setY(startPosition);</span>
+                    } else {
+                        break;
+                    }
+                }
+
+            }
+<span class="nc" id="L121">        }</span>
+<span class="nc bnc" id="L122" title="All 4 branches missed.">        if (blockbelow &amp;&amp; !physicalObject.isJumping()) {</span>
+<span class="nc" id="L123">            physicalObject.setFalling(false);</span>
+<span class="nc bnc" id="L124" title="All 4 branches missed.">        } else if (!blockbelow &amp;&amp; !physicalObject.isJumping()) {</span>
+<span class="nc" id="L125">            physicalObject.setFalling(true);</span>
+        }
+<span class="nc" id="L127">    }</span>
+    public void CheckPhysicalCollisionsX(PhysicalObject mainObject, List&lt;GameObject&gt; objects, Camera camera) {
+<span class="nc bnc" id="L129" title="All 4 branches missed.">        if (mainObject.getX() &lt;= camera.getLeftCamLimit() &amp;&amp; mainObject.getVx() &lt; 0) {</span>
+<span class="nc" id="L130">            mainObject.handleWallColision(camera.getLeftCamLimit());</span>
+<span class="nc" id="L131">            return;</span>
+        }
+<span class="nc" id="L133">        boolean colision = false;</span>
+<span class="nc" id="L134">        List&lt;GameObject&gt; robjects = new ArrayList&lt;&gt;(objects);</span>
+<span class="nc" id="L135">        Collections.reverse(robjects);</span>
+<span class="nc bnc" id="L136" title="All 2 branches missed.">        for (GameObject object : objects) {</span>
+<span class="nc bnc" id="L137" title="All 4 branches missed.">            if (mainObject.getVx() == 0 &amp;&amp; object instanceof PhysicalObject enemy) {</span>
+<span class="nc bnc" id="L138" title="All 2 branches missed.">                if (mainObject.collidesWithPhysical(enemy, Math.abs(enemy.getVx()), -0.2f)) {</span>
+<span class="nc bnc" id="L139" title="All 4 branches missed.">                    if (enemy.getX() &gt; mainObject.getX() &amp;&amp; mainObject.getY() &gt;= enemy.getY())</span>
+<span class="nc" id="L140">                        mainObject.handleCollision(enemy, 'L');</span>
+<span class="nc bnc" id="L141" title="All 4 branches missed.">                    else if (enemy.getX() &lt; mainObject.getX() &amp;&amp; mainObject.getY() &gt;= enemy.getY())</span>
+<span class="nc" id="L142">                        mainObject.handleCollision(enemy, 'R');</span>
+                }
+<span class="nc bnc" id="L144" title="All 2 branches missed.">            } else if (mainObject.getVx() &gt; 0) {</span>
+<span class="nc bnc" id="L145" title="All 2 branches missed.">                if (object != mainObject) {</span>
+<span class="nc" id="L146">                    float startPosition = mainObject.getX();</span>
+<span class="nc" id="L147">                    float totalDistance = mainObject.getVx();</span>
+<span class="nc" id="L148">                    float remainingDistance = totalDistance;</span>
+<span class="nc" id="L149">                    float movementStep = mainObject.getVx() / 3;</span>
+<span class="nc bnc" id="L150" title="All 2 branches missed.">                    while (remainingDistance &gt; 0) {</span>
+<span class="nc" id="L151">                        mainObject.setX(mainObject.getX() + movementStep);</span>
+<span class="nc bnc" id="L152" title="All 2 branches missed.">                        if (mainObject.collidesWith(object)) {</span>
+<span class="nc" id="L153">                            colision = true;</span>
+<span class="nc" id="L154">                            mainObject.handleCollision(object, 'R');</span>
+<span class="nc" id="L155">                            break;</span>
+                        }
+<span class="nc" id="L157">                        remainingDistance -= movementStep;</span>
+<span class="nc" id="L158">                        movementStep = Math.min(remainingDistance, mainObject.getVx() / 3);</span>
+                    }
+<span class="nc bnc" id="L160" title="All 2 branches missed.">                    if (!colision) {</span>
+<span class="nc" id="L161">                        mainObject.setX(startPosition);</span>
+                    } else {
+                        break;
+                    }
+<span class="nc" id="L165">                }</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">            } else if (mainObject.getVx() &lt; 0) {</span>
+<span class="nc bnc" id="L167" title="All 2 branches missed.">                if (object != mainObject) {</span>
+<span class="nc" id="L168">                    float startPosition = mainObject.getX();</span>
+<span class="nc" id="L169">                    float totalDistance = mainObject.getVx();</span>
+<span class="nc" id="L170">                    float remainingDistance = totalDistance;</span>
+<span class="nc" id="L171">                    float movementStep = mainObject.getVx() / 3;</span>
+<span class="nc bnc" id="L172" title="All 2 branches missed.">                    while (remainingDistance &lt; 0) {</span>
+<span class="nc" id="L173">                        mainObject.setX(mainObject.getX() + movementStep);</span>
+<span class="nc bnc" id="L174" title="All 2 branches missed.">                        if (mainObject.collidesWith(object)) {</span>
+<span class="nc" id="L175">                            colision = true;</span>
+<span class="nc" id="L176">                            mainObject.handleCollision(object, 'L');</span>
+<span class="nc" id="L177">                            break;</span>
+                        }
+<span class="nc" id="L179">                        remainingDistance -= movementStep;</span>
+<span class="nc" id="L180">                        movementStep = Math.min(remainingDistance, mainObject.getVx() / 3);</span>
+                    }
+<span class="nc bnc" id="L182" title="All 2 branches missed.">                    if (!colision) {</span>
+<span class="nc" id="L183">                        mainObject.setX(startPosition);</span>
+                    } else {
+                        break;
+                    }
+                }
+            }
+<span class="nc" id="L189">        }</span>
+<span class="nc" id="L190">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

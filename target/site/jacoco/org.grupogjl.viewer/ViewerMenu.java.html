@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ViewerMenu.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mario</a> &gt; <a href="index.source.html" class="el_package">org.grupogjl.viewer</a> &gt; <span class="el_source">ViewerMenu.java</span></div><h1>ViewerMenu.java</h1><pre class="source lang-java linenums">package org.grupogjl.viewer;
+
+import org.grupogjl.gui.GeneralGui;
+import org.grupogjl.state.State;
+import org.grupogjl.state.StateMenu;
+
+import java.io.IOException;
+import java.util.List;
+
+<span class="nc" id="L10">public class ViewerMenu implements Viewer {</span>
+    @Override
+    public void draw(State state, GeneralGui gui) throws IOException {
+<span class="nc" id="L13">        gui.clear();</span>
+<span class="nc" id="L14">        StateMenu stateMenu = (StateMenu) state;</span>
+<span class="nc bnc" id="L15" title="All 2 branches missed.">        if (stateMenu.getModel().isSelectedOption()) {</span>
+<span class="nc" id="L16">            int y = 1;</span>
+<span class="nc" id="L17">            List&lt;String&gt; stringList = stateMenu.getModel().getTextOption().lines().toList();</span>
+<span class="nc bnc" id="L18" title="All 2 branches missed.">            for (String s : stringList) {</span>
+<span class="nc" id="L19">                gui.drawMenuText((416 - s.length() * 8) / 2 + 1, y * 12, s, &quot;&quot;);</span>
+<span class="nc" id="L20">                y++;</span>
+<span class="nc" id="L21">            }</span>
+<span class="nc" id="L22">            String text = &quot;press enter to go back to menu&quot;;</span>
+<span class="nc" id="L23">            gui.drawMenuText((416 - text.length() * 8) / 2 + 1, ++y * 12, text, &quot;&quot;);</span>
+<span class="nc" id="L24">        } else {</span>
+            String color;
+<span class="nc bnc" id="L26" title="All 2 branches missed.">            for (int y = 0; y &lt; stateMenu.getModel().getButtons().size(); y++) {</span>
+<span class="nc bnc" id="L27" title="All 2 branches missed.">                if (y == stateMenu.getModel().getSelectedButton()) color = &quot;#ea9e22&quot;;</span>
+<span class="nc" id="L28">                else color = &quot;&quot;;</span>
+<span class="nc" id="L29">                String text = stateMenu.getModel().getButtons().elementAt(y).getText();</span>
+<span class="nc" id="L30">                gui.drawMenuText((416 - text.length() * 8) / 2 + 1, 121 + 24 * y, text, color);</span>
+            }
+<span class="nc" id="L32">            gui.drawMenuImage(121, 17, &quot;MenuScreen.png&quot;);</span>
+        }
+<span class="nc" id="L34">        gui.refresh();</span>
+<span class="nc" id="L35">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

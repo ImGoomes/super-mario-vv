@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ControllerGame.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mario</a> &gt; <a href="index.source.html" class="el_package">org.grupogjl.controller</a> &gt; <span class="el_source">ControllerGame.java</span></div><h1>ControllerGame.java</h1><pre class="source lang-java linenums">package org.grupogjl.controller;
+
+import org.grupogjl.Game;
+import org.grupogjl.commands.ExitToMenuCommand;
+import org.grupogjl.commands.GameCommand;
+import org.grupogjl.commands.GameOverCommand;
+import org.grupogjl.commands.PauseCommand;
+import org.grupogjl.controller.game.ControllerLevel;
+import org.grupogjl.gui.GeneralGui;
+import org.grupogjl.model.game.elements.Mario;
+import org.grupogjl.model.game.elements.level.Level;
+import org.grupogjl.state.StateGame;
+
+import java.io.IOException;
+
+import static org.grupogjl.gui.GeneralGui.ACTION.QUIT;
+import static org.grupogjl.gui.GeneralGui.ACTION.SELECT;
+
+<span class="fc" id="L19">public class ControllerGame implements Controller {</span>
+<span class="fc" id="L20">    private GameCommand gameOverCommand = new GameOverCommand();</span>
+<span class="fc" id="L21">    private GameCommand exitToMenuCommand = new ExitToMenuCommand();</span>
+<span class="fc" id="L22">    private GameCommand pauseCommand = new PauseCommand();</span>
+<span class="fc" id="L23">    private ControllerLevel controllerLevel = new ControllerLevel();</span>
+    public GameCommand getGameOverCommand() {
+<span class="nc" id="L25">        return gameOverCommand;</span>
+    }
+    public GameCommand getExitToMenuCommand() {
+<span class="nc" id="L28">        return exitToMenuCommand;</span>
+    }
+    public GameCommand getPauseCommand() {
+<span class="nc" id="L31">        return pauseCommand;</span>
+    }
+    public ControllerLevel getControllerLevel() {
+<span class="nc" id="L34">        return controllerLevel;</span>
+    }
+    @Override
+    public void step(Game game, GeneralGui.ACTION action, long time) throws IOException {
+<span class="fc" id="L38">        Level model = game.getStateGame().getModel();</span>
+<span class="fc" id="L39">        Mario mario = model.getMario();</span>
+<span class="fc" id="L40">        int lives = mario.getLives();</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        if (lives == 0) {</span>
+<span class="fc" id="L42">            getGameOverCommand().execute(game);</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">            if (action == SELECT) {</span>
+<span class="fc" id="L44">                getExitToMenuCommand().execute(game);</span>
+            }
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        } else if (action == QUIT) {</span>
+<span class="fc" id="L47">            getPauseCommand().execute(game);</span>
+        } else {
+<span class="fc" id="L49">            StateGame gameState = game.getStateGame();</span>
+<span class="fc" id="L50">            Level level = gameState.getModel();</span>
+<span class="fc" id="L51">            getControllerLevel().step(level, action, time);</span>
+        }
+<span class="fc" id="L53">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

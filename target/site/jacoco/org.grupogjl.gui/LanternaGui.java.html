@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LanternaGui.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mario</a> &gt; <a href="index.source.html" class="el_package">org.grupogjl.gui</a> &gt; <span class="el_source">LanternaGui.java</span></div><h1>LanternaGui.java</h1><pre class="source lang-java linenums">package org.grupogjl.gui;
+
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.graphics.TextGraphics;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.screen.TerminalScreen;
+import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
+import com.googlecode.lanterna.terminal.Terminal;
+import com.googlecode.lanterna.terminal.swing.AWTTerminalFontConfiguration;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+
+public class LanternaGui implements GeneralGui {
+    private Screen screen;
+    private SpriteBuilder spriteBuilder;
+<span class="nc" id="L25">    public LanternaGui(Screen screen) {</span>
+<span class="nc" id="L26">        this.screen = screen;</span>
+<span class="nc" id="L27">    }</span>
+<span class="nc" id="L28">    public LanternaGui(int width, int height) throws IOException, URISyntaxException, FontFormatException {</span>
+<span class="nc" id="L29">        AWTTerminalFontConfiguration fontConfig = loadSquareFont();</span>
+<span class="nc" id="L30">        Terminal terminal = createTerminal(width, height, fontConfig);</span>
+<span class="nc" id="L31">        this.screen = createScreen(terminal);</span>
+<span class="nc" id="L32">        this.spriteBuilder = new SpriteBuilder();</span>
+<span class="nc" id="L33">    }</span>
+    public void setSpriteBuilder(SpriteBuilder spriteBuilder) {
+<span class="nc" id="L35">        this.spriteBuilder = spriteBuilder;</span>
+<span class="nc" id="L36">    }</span>
+    public void setScreen(Screen screen) {
+<span class="nc" id="L38">        this.screen = screen;</span>
+<span class="nc" id="L39">    }</span>
+    private Screen createScreen(Terminal terminal) throws IOException {
+<span class="nc" id="L41">        Screen screen = new TerminalScreen(terminal);</span>
+<span class="nc" id="L42">        screen.startScreen();</span>
+<span class="nc" id="L43">        screen.doResizeIfNecessary();</span>
+<span class="nc" id="L44">        return screen;</span>
+    }
+    private Terminal createTerminal(int width, int height, AWTTerminalFontConfiguration fontConfig) throws IOException {
+<span class="nc" id="L47">        TerminalSize terminalsSize = new TerminalSize(width, height + 1);</span>
+<span class="nc" id="L48">        DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory().setInitialTerminalSize(terminalsSize);</span>
+<span class="nc" id="L49">        terminalFactory.setForceAWTOverSwing(true);</span>
+<span class="nc" id="L50">        terminalFactory.setTerminalEmulatorFontConfiguration(fontConfig);</span>
+<span class="nc" id="L51">        Terminal terminal = terminalFactory.createTerminal();</span>
+<span class="nc" id="L52">        return terminal;</span>
+    }
+    private AWTTerminalFontConfiguration loadSquareFont() throws URISyntaxException, IOException, FontFormatException {
+<span class="nc" id="L55">        URL resource = getClass().getClassLoader().getResource(&quot;Fonts/square.ttf&quot;);</span>
+<span class="nc" id="L56">        File fontFile = new File(resource.toURI());</span>
+<span class="nc" id="L57">        Font font = Font.createFont(Font.TRUETYPE_FONT, fontFile);</span>
+
+<span class="nc" id="L59">        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();</span>
+<span class="nc" id="L60">        ge.registerFont(font);</span>
+
+<span class="nc" id="L62">        Font loadedFont = font.deriveFont(Font.PLAIN, 3);</span>
+<span class="nc" id="L63">        AWTTerminalFontConfiguration fontConfig = AWTTerminalFontConfiguration.newInstance(loadedFont);</span>
+<span class="nc" id="L64">        return fontConfig;</span>
+    }
+    public ACTION getNextAction() throws IOException {
+<span class="nc" id="L67">        KeyStroke keyStroke = screen.pollInput();</span>
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        if (keyStroke == null) return ACTION.NONE;</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">        if (keyStroke.getKeyType() == KeyType.EOF) return ACTION.QUIT;</span>
+<span class="nc bnc" id="L70" title="All 4 branches missed.">        if (keyStroke.getKeyType() == KeyType.Character &amp;&amp; keyStroke.getCharacter() == 'q') return ACTION.QUIT;</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">        if (keyStroke.getKeyType() == KeyType.ArrowUp) return ACTION.UP;</span>
+<span class="nc bnc" id="L72" title="All 2 branches missed.">        if (keyStroke.getKeyType() == KeyType.ArrowRight) return ACTION.RIGHT;</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">        if (keyStroke.getKeyType() == KeyType.ArrowDown) return ACTION.DOWN;</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">        if (keyStroke.getKeyType() == KeyType.ArrowLeft) return ACTION.LEFT;</span>
+<span class="nc bnc" id="L75" title="All 4 branches missed.">        if (keyStroke.getKeyType() == KeyType.Character &amp;&amp; keyStroke.getCharacter() == 'b') return ACTION.THROWBALL;</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        if (keyStroke.getKeyType() == KeyType.Enter) return ACTION.SELECT;</span>
+<span class="nc" id="L77">        return ACTION.NONE;</span>
+    }
+    @Override
+    public void drawImage(float x, float y, String filename) {
+<span class="nc" id="L81">        BufferedImage image = spriteBuilder.loadImage(filename);</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">        for (int i = 0; i &lt; image.getWidth(); i++) {</span>
+<span class="nc bnc" id="L83" title="All 2 branches missed.">            for (int j = 0; j &lt; image.getHeight(); j++) {</span>
+<span class="nc" id="L84">                Color c = new Color(image.getRGB(i, j));</span>
+<span class="nc" id="L85">                String color = &quot;#&quot; + Integer.toHexString(c.getRGB()).substring(2);</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">                if (!isTransparent(image, i, j)) {</span>
+<span class="nc" id="L87">                    drawPixel((int) Math.floor(x * 16 + i), (int) Math.floor(y * 16 + j), color);</span>
+                }
+            }
+        }
+<span class="nc" id="L91">    }</span>
+    @Override
+    public boolean isTransparent(BufferedImage image, int x, int y) {
+<span class="nc" id="L94">        int pixel = image.getRGB(x, y);</span>
+<span class="nc bnc" id="L95" title="All 2 branches missed.">        return (pixel &gt;&gt; 24) == 0x00;</span>
+    }
+    @Override
+    public void drawPixel(int x, int y, String color) {
+<span class="nc" id="L99">        TextGraphics tg = screen.newTextGraphics();</span>
+<span class="nc" id="L100">        tg.setForegroundColor(TextColor.Factory.fromString(color));</span>
+<span class="nc" id="L101">        tg.setBackgroundColor(TextColor.Factory.fromString(color));</span>
+<span class="nc" id="L102">        tg.putString(x, y, &quot; &quot;);</span>
+<span class="nc" id="L103">    }</span>
+    @Override
+    public void drawMenuImage(int x, int y, String filename) {
+<span class="nc" id="L106">        drawMenuImage(x, y, filename, &quot;&quot;);</span>
+<span class="nc" id="L107">    }</span>
+    @Override
+    public void drawMenuImage(int x, int y, String filename, String dcolor) {
+<span class="nc" id="L110">        BufferedImage image = spriteBuilder.loadImage(filename);</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">        for (int i = 0; i &lt; image.getWidth(); i++) {</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">            for (int j = 0; j &lt; image.getHeight(); j++) {</span>
+                String color;
+<span class="nc bnc" id="L114" title="All 2 branches missed.">                if (dcolor.equals(&quot;&quot;)) {</span>
+<span class="nc" id="L115">                    Color c = new Color(image.getRGB(i, j));</span>
+<span class="nc" id="L116">                    color = &quot;#&quot; + Integer.toHexString(c.getRGB()).substring(2);</span>
+<span class="nc" id="L117">                } else {</span>
+<span class="nc" id="L118">                    color = dcolor;</span>
+                }
+<span class="nc bnc" id="L120" title="All 2 branches missed.">                if (!isTransparent(image, i, j)) {</span>
+<span class="nc" id="L121">                    drawPixel((int) Math.floor(x + i), (int) Math.floor(y + j), color);</span>
+                }
+            }
+        }
+<span class="nc" id="L125">    }</span>
+    @Override
+    public void drawMenuText(int x, int y, String text) {
+<span class="nc" id="L128">        drawMenuText(x, y, text, &quot;&quot;);</span>
+<span class="nc" id="L129">    }</span>
+    @Override
+    public void drawMenuText(int x, int y, String text, String color) {
+<span class="nc" id="L132">        int newx = x;</span>
+        String filename;
+<span class="nc bnc" id="L134" title="All 2 branches missed.">        for (int i = 0; i &lt; text.length(); i++) {</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">            if (text.charAt(i) == ' ') {</span>
+<span class="nc" id="L136">                newx += 8;</span>
+<span class="nc bnc" id="L137" title="All 2 branches missed.">            } else if (text.charAt(i) == '.') {</span>
+<span class="nc" id="L138">                filename = &quot;/Letters/dot.png&quot;;</span>
+<span class="nc" id="L139">                drawMenuImage(newx, y, filename, color);</span>
+<span class="nc" id="L140">                newx += 8;</span>
+<span class="nc bnc" id="L141" title="All 2 branches missed.">            } else if (text.charAt(i) == ':') {</span>
+<span class="nc" id="L142">                filename = &quot;/Letters/doubledot.png&quot;;</span>
+<span class="nc" id="L143">                drawMenuImage(newx, y, filename, color);</span>
+<span class="nc" id="L144">                newx += 8;</span>
+<span class="nc bnc" id="L145" title="All 2 branches missed.">            } else if (text.charAt(i) == '-') {</span>
+<span class="nc" id="L146">                filename = &quot;/Letters/hifen.png&quot;;</span>
+<span class="nc" id="L147">                drawMenuImage(newx, y, filename, color);</span>
+<span class="nc" id="L148">                newx += 8;</span>
+<span class="nc bnc" id="L149" title="All 2 branches missed.">            } else if (text.charAt(i) == '!') {</span>
+<span class="nc" id="L150">                filename = &quot;/Letters/exclamationMark.png&quot;;</span>
+<span class="nc" id="L151">                drawMenuImage(newx, y, filename, color);</span>
+<span class="nc" id="L152">                newx += 8;</span>
+            } else {
+<span class="nc" id="L154">                filename = &quot;/Letters/&quot; + text.charAt(i) + &quot;.png&quot;;</span>
+<span class="nc" id="L155">                drawMenuImage(newx, y, filename, color);</span>
+<span class="nc" id="L156">                newx += 8;</span>
+            }
+        }
+<span class="nc" id="L159">    }</span>
+    @Override
+    public void drawGameOver() throws IOException {
+<span class="nc" id="L162">        clear();</span>
+<span class="nc" id="L163">        drawMenuImage(65, 89, &quot;gameOver.png&quot;);</span>
+<span class="nc" id="L164">        refresh();</span>
+<span class="nc" id="L165">    }</span>
+    @Override
+    public void clear() {
+<span class="nc" id="L168">        TextGraphics tg = screen.newTextGraphics();</span>
+<span class="nc" id="L169">        tg.setBackgroundColor(TextColor.Factory.fromString(&quot;#6c9cfc&quot;));</span>
+<span class="nc" id="L170">        tg.fillRectangle(new TerminalPosition(0, 0), screen.getTerminalSize(), ' ');</span>
+<span class="nc" id="L171">    }</span>
+    @Override
+    public void refresh() throws IOException {
+<span class="nc" id="L174">        screen.refresh();</span>
+<span class="nc" id="L175">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

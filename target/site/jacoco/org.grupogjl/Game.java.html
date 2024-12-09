@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Game.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Mario</a> &gt; <a href="index.source.html" class="el_package">org.grupogjl</a> &gt; <span class="el_source">Game.java</span></div><h1>Game.java</h1><pre class="source lang-java linenums">package org.grupogjl;
+
+import org.grupogjl.audio.WavAudioPlayer;
+import org.grupogjl.gui.LanternaGui;
+import org.grupogjl.state.State;
+import org.grupogjl.state.StateGame;
+import org.grupogjl.state.StateMenu;
+import org.grupogjl.state.StatePause;
+
+import java.awt.*;
+import java.io.IOException;
+import java.net.URISyntaxException;
+
+public class Game {
+    private static Game instance;
+    private final LanternaGui gui;
+<span class="nc" id="L17">    private State state = new StateMenu();</span>
+<span class="nc" id="L18">    private Game() throws FontFormatException, IOException, URISyntaxException {</span>
+<span class="nc" id="L19">        this.gui = new LanternaGui(416, 207);</span>
+<span class="nc" id="L20">        WavAudioPlayer.playSound(&quot;gameSound.wav&quot;);</span>
+
+<span class="nc" id="L22">    }</span>
+<span class="nc" id="L23">    public Game(LanternaGui gui) { // for testing</span>
+<span class="nc" id="L24">        this.gui = gui;</span>
+
+<span class="nc" id="L26">    }</span>
+    public static synchronized Game getInstance() throws FontFormatException, IOException, URISyntaxException {
+<span class="nc bnc" id="L28" title="All 2 branches missed.">        if (instance == null) {</span>
+<span class="nc" id="L29">            instance = new Game();</span>
+        }
+<span class="nc" id="L31">        return instance;</span>
+    }
+    public State getState() {
+<span class="nc" id="L34">        return state;</span>
+    }
+    public LanternaGui getGui() {
+<span class="nc" id="L37">        return gui;</span>
+    }
+    public void run() throws InterruptedException, IOException {
+<span class="nc" id="L40">        int FPS = 60;</span>
+<span class="nc" id="L41">        long targetFrameTime = 1000 / FPS;</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">        while (state != null) {</span>
+<span class="nc" id="L43">            long startTime = System.currentTimeMillis();</span>
+<span class="nc" id="L44">            state.step(this, gui, startTime);</span>
+<span class="nc" id="L45">            long elapsedTime = System.currentTimeMillis() - startTime;</span>
+<span class="nc" id="L46">            long sleepTime = targetFrameTime - elapsedTime;</span>
+<span class="nc bnc" id="L47" title="All 2 branches missed.">            if (sleepTime &gt; 0) {</span>
+<span class="nc" id="L48">                Thread.sleep(sleepTime);</span>
+            }
+<span class="nc" id="L50">        }</span>
+<span class="nc" id="L51">        System.exit(0);</span>
+<span class="nc" id="L52">    }</span>
+    public void setStateMenu() {
+<span class="nc" id="L54">        state = new StateMenu();</span>
+<span class="nc" id="L55">    }</span>
+    public void setStateGame() throws IOException {
+<span class="nc" id="L57">        state = new StateGame();</span>
+<span class="nc" id="L58">    }</span>
+    public void setStatePause() {
+<span class="nc" id="L60">        state = new StatePause((StateGame) state);</span>
+<span class="nc" id="L61">    }</span>
+    public void setStateNull() {
+<span class="nc" id="L63">        this.state = null;</span>
+<span class="nc" id="L64">    }</span>
+    public StateGame getStateGame() { //testing
+<span class="nc" id="L66">        return (StateGame) state;</span>
+    }
+    public void setStateGame(State parent) {
+<span class="nc" id="L69">        state = parent;</span>
+<span class="nc" id="L70">    }</span>
+    public StateMenu getStateMenu() {
+<span class="nc" id="L72">        return (StateMenu) state;</span>
+    }
+    public StatePause getStatePause() {
+<span class="nc" id="L75">        return (StatePause) state;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
