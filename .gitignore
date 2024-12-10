@@ -1,10 +1,5 @@
+# Maven Build Artifacts
 target/
-.settings/
-!org.jacoco.core/.settings/
-!org.jacoco.core.test/.settings/
-org.jacoco.agent/src/jacocoagent.jar
-.idea
-*.iml
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
@@ -12,5 +7,19 @@ pom.xml.next
 release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
+
+
+# JaCoCo Agent
+org.jacoco.agent/src/jacocoagent.jar
+
+# Maven Wrapper
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
+
+# IntelliJ
+.idea
+out
+*.iml
+*.ipr
+*.iws
+.ijwb/
