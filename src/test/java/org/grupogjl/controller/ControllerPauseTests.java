@@ -29,7 +29,7 @@ class ControllerPauseTests {
     }
 
     @Test
-    void testStepActionDown() {
+    void testExecuteActionDown() {
         controllerPause.step(mockGame, GeneralGui.ACTION.DOWN, 100L);
 
         verify(mockModel, times(1)).nextPosition();
@@ -38,7 +38,7 @@ class ControllerPauseTests {
     }
 
     @Test
-    void testStepActionUp() {
+    void testExecuteActionUp() {
         controllerPause.step(mockGame, GeneralGui.ACTION.UP, 100L);
 
         verify(mockModel, times(1)).lastPosition();
@@ -47,7 +47,7 @@ class ControllerPauseTests {
     }
 
     @Test
-    void testStepActionSelect() {
+    void testExecuteActionSelect() {
         controllerPause.step(mockGame, GeneralGui.ACTION.SELECT, 100L);
 
         verify(mockModel, times(1)).execute(mockGame);
@@ -56,7 +56,7 @@ class ControllerPauseTests {
     }
 
     @Test
-    void testStepIrrelevantAction() {
+    void testExecuteIrrelevantAction() {
         controllerPause.step(mockGame, GeneralGui.ACTION.NONE, 100L);
 
         verify(mockModel, never()).nextPosition();
