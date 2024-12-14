@@ -63,4 +63,13 @@ class ControllerPauseTests {
         verify(mockModel, never()).lastPosition();
         verify(mockModel, never()).execute(mockGame);
     }
+
+    @Test
+    void testSet_NullAction() {
+        controllerPause.step(mockGame, null, 100L);
+
+        verify(mockModel, never()).nextPosition();
+        verify(mockModel, never()).lastPosition();
+        verify(mockModel, never()).execute(mockGame);
+    }
 }

@@ -87,4 +87,14 @@ class ControllerMenuTests {
         verify(mockModel, never()).setSelectedOption(false);
         verify(mockModel, never()).execute(mockGame);
     }
+
+    @Test
+    void testSet_NullAction() {
+        controllerMenu.step(mockGame, null, 100L);
+
+        verify(mockModel, never()).nextPosition();
+        verify(mockModel, never()).lastPosition();
+        verify(mockModel, never()).setSelectedOption(false);
+        verify(mockModel, never()).execute(mockGame);
+    }
 }
