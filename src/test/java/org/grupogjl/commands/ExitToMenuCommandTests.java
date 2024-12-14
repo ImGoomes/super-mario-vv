@@ -20,13 +20,13 @@ class ExitToMenuCommandTests {
     }
 
     @Test
-    void testExecuteSetsGameStateToMenu() {
+    void testSet_ExitToMenu_ToGameState() {
         exitToMenuCommand.execute(mockGame);
         verify(mockGame, times(1)).setStateMenu();
     }
 
     @Test
-    void testExecuteSetsExitToMenuNullGame() {
+    void testSet_NullPointer_ToRExiToMenuCommand() {
         assertThrows(NullPointerException.class, () -> exitToMenuCommand.execute(null), "Executing with a null game should throw a NullPointerException.");
     }
 }

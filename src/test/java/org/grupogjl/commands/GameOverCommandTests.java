@@ -23,13 +23,13 @@ class GameOverCommandTests {
     }
 
     @Test
-    void testExecuteSetsGameOver() {
+    void testSet_GameOver_ToGameState() {
         gameOverCommand.execute(mockGame);
         verify(mockStateGame, times(1)).setGameOver(true);
     }
 
     @Test
-    void testExecuteSetsGameOverNullGame() {
+    void testSet_NullPointer_ToGameOverCommand() {
         assertThrows(NullPointerException.class, () -> gameOverCommand.execute(null), "Executing with a null game should throw a NullPointerException.");
     }
 }

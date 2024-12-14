@@ -29,7 +29,7 @@ class ControllerMenuTests {
     }
 
     @Test
-    void testExecuteOptionSelectedAndActionSelect() {
+    void testSet_OptionSelectedAndActionSelect() {
         when(mockModel.isSelectedOption()).thenReturn(true);
 
         controllerMenu.step(mockGame, GeneralGui.ACTION.SELECT, 100L);
@@ -41,7 +41,7 @@ class ControllerMenuTests {
     }
 
     @Test
-    void testExecuteOptionNotSelectedAndActionDown() {
+    void testSet_OptionNotSelectedAndActionDown() {
         when(mockModel.isSelectedOption()).thenReturn(false);
 
         controllerMenu.step(mockGame, GeneralGui.ACTION.DOWN, 100L);
@@ -53,7 +53,7 @@ class ControllerMenuTests {
     }
 
     @Test
-    void testExecuteOptionNotSelectedAndActionUp() {
+    void testSet_OptionNotSelectedAndActionUp() {
         when(mockModel.isSelectedOption()).thenReturn(false);
 
         controllerMenu.step(mockGame, GeneralGui.ACTION.UP, 100L);
@@ -65,7 +65,7 @@ class ControllerMenuTests {
     }
 
     @Test
-    void testExecuteOptionNotSelectedAndActionSelect() {
+    void testSet_OptionNotSelectedAndActionSelect() {
         when(mockModel.isSelectedOption()).thenReturn(false);
 
         controllerMenu.step(mockGame, GeneralGui.ACTION.SELECT, 100L);
@@ -77,7 +77,7 @@ class ControllerMenuTests {
     }
 
     @Test
-    void testExecuteOptionNotSelectedAndNoRelevantAction() {
+    void testSet_OptionNotSelectedAndNoRelevantAction() {
         when(mockModel.isSelectedOption()).thenReturn(false);
 
         controllerMenu.step(mockGame, GeneralGui.ACTION.NONE, 100L);
