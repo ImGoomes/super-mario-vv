@@ -21,7 +21,7 @@ class GameCommandTests {
     }
 
     @Test
-    void testExecuteWithValidGame() {
+    void testSet_ValidGame_ToGameCommand() {
         Game mockGame = mock(Game.class);
         GameCommand command = new TestGameCommand();
 
@@ -30,7 +30,7 @@ class GameCommandTests {
     }
 
     @Test
-    void testExecuteWithNullGame() {
+    void testSet_NullGame_ToGameCommand() {
         GameCommand command = new TestGameCommand();
         assertDoesNotThrow(() -> command.execute(null), "The execute method should not throw an exception even if the game is null.");
     }

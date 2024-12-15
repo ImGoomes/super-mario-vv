@@ -27,14 +27,14 @@ class StartGameCommandTests {
     }
 
     @Test
-    void testExecuteSetsGameStateToStart() throws IOException{
+    void testSet_Start_ToGameState() throws IOException{
         startGameCommand.execute(mockGame);
         verify(mockGame, times(1)).setStateGame();
         verify(mockStateGame, times(1)).setGameOver(false);
     }
 
     @Test
-    void testExecuteThrowsIOException() throws IOException {
+    void test_ThrowsIOException__ToStartGameCommand() throws IOException {
         doThrow(new IOException("Mock IOException")).when(mockGame).setStateGame();
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> startGameCommand.execute(mockGame),
@@ -43,7 +43,7 @@ class StartGameCommandTests {
     }
 
     @Test
-    void testExecuteSetsStartGameNullGame() {
+    void testSet_NullPointer_ToStartGameCommand() {
         assertThrows(NullPointerException.class, () -> startGameCommand.execute(null), "Executing with a null game should throw a NullPointerException.");
     }
 }

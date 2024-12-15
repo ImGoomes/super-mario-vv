@@ -24,13 +24,13 @@ class ResumeCommandTests {
     }
 
     @Test
-    void testExecuteSetsGameStateToResume() {
+    void testSet_Resume_ToGameState() {
         resumeCommand.execute(mockGame);
         verify(mockGame, times(1)).setStateGame(mockStatePause.getParent());
     }
 
     @Test
-    void testExecuteSetsResumeNullGame() {
+    void testSet_NullPointer_ToResumeCommand() {
         assertThrows(NullPointerException.class, () -> resumeCommand.execute(null), "Executing with a null game should throw a NullPointerException.");
     }
 }

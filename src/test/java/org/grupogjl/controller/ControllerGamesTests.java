@@ -67,7 +67,7 @@ class ControllerGamesTests {
     }
 
     @Test
-    void testExecuteGameOverAndExitToMenu() throws IOException {
+    void testSet_GameOverAndExitToMenu() throws IOException {
         when(mockMario.getLives()).thenReturn(0);
 
         controllerGame.step(mockGame, GeneralGui.ACTION.SELECT, 100L);
@@ -79,7 +79,7 @@ class ControllerGamesTests {
     }
 
     @Test
-    void testExecuteGameOverWithoutSelectAction() throws IOException {
+    void testSet_GameOverWithoutSelectAction() throws IOException {
         when(mockMario.getLives()).thenReturn(0);
 
         controllerGame.step(mockGame, GeneralGui.ACTION.QUIT, 100L);
@@ -91,7 +91,7 @@ class ControllerGamesTests {
     }
 
     @Test
-    void testExecutePauseAction() throws IOException {
+    void testSet_PauseAction() throws IOException {
         when(mockMario.getLives()).thenReturn(3);
 
         controllerGame.step(mockGame, GeneralGui.ACTION.QUIT, 100L);
@@ -103,7 +103,7 @@ class ControllerGamesTests {
     }
 
     @Test
-    void testExecuteNormalAction() throws IOException {
+    void testSet_NoneAction() throws IOException {
         when(mockMario.getLives()).thenReturn(3);
 
         controllerGame.step(mockGame, GeneralGui.ACTION.NONE, 100L);

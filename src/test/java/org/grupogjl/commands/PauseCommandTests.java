@@ -21,13 +21,13 @@ class PauseCommandTests {
     }
 
     @Test
-    void testExecuteSetsGameStateToPause() {
+    void testSet_Pause_ToGameState() {
         pauseCommand.execute(mockGame);
         verify(mockGame, times(1)).setStatePause();
     }
 
     @Test
-    void testExecuteSetsPauseNullGame() {
+    void testSet_NullPointer_ToPauseCommand() {
         assertThrows(NullPointerException.class, () -> pauseCommand.execute(null), "Executing with a null game should throw a NullPointerException.");
     }
 }

@@ -25,7 +25,7 @@ class ControllerTests {
     }
 
     @Test
-    void testStep() throws IOException {
+    void testSet_ValidStep() throws IOException {
         GeneralGui.ACTION action = GeneralGui.ACTION.NONE;
         long time = System.currentTimeMillis();
 
@@ -35,7 +35,7 @@ class ControllerTests {
     }
 
     @Test
-    void testStepThrowsIOException() throws IOException {
+    void testSet_Step_ThrowsIOException() throws IOException {
         GeneralGui.ACTION action = GeneralGui.ACTION.NONE;
         long time = System.currentTimeMillis();
 

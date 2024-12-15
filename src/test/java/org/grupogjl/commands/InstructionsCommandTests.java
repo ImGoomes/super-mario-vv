@@ -28,7 +28,7 @@ class InstructionsCommandTests {
     }
 
     @Test
-    void testExecuteSetsInstructions() {
+    void testSet_Instructions_ToGameStateMenu() {
         InstructionsCommand command = new InstructionsCommand();
         String expectedText = """
                 upper arrow to jump
@@ -41,12 +41,12 @@ class InstructionsCommandTests {
 
         command.execute(mockGame);
 
-        verify(mockModel).setSelectedOption(true); // Verify selected option is set
-        verify(mockModel).setTextOption(expectedText); // Verify the instructions text is set
+        verify(mockModel).setSelectedOption(true);
+        verify(mockModel).setTextOption(expectedText);
     }
 
     @Test
-    void testExecuteSetsInstructionsWithNullGame() {
+    void testSet_NullPointer_ToInstructionsCommand() {
         assertThrows(NullPointerException.class, () -> instructionsCommand.execute(null), "Executing with a null game should throw a NullPointerException.");
     }
 }
