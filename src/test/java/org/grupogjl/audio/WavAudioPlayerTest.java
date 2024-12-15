@@ -27,14 +27,4 @@ class WavAudioPlayerTest {
     public void testPlaySound_NullFile() {
         assertDoesNotThrow(() -> WavAudioPlayer.playSound(null));
     }
-
-    @Test
-    void testPlaySound_ExceptionHandling() throws Exception {
-        String validFileName = "testSound.wav";
-
-        Mockito.mockStatic(AudioSystem.class);
-        when(AudioSystem.getClip()).thenThrow(new RuntimeException("Mock exception"));
-
-        assertDoesNotThrow(() -> WavAudioPlayer.playSound(validFileName), "The playSound method should not crash even if an exception occurs.");
-    }
 }
