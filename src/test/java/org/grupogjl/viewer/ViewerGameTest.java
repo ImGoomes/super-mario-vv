@@ -75,11 +75,6 @@ class ViewerGameTest {
         when(mockCamera.getLeftCamLimit()).thenReturn(0f);
         when(mockCamera.getRightCamLimit()).thenReturn(10f);
 
-        // Debugging statements
-        System.out.println("Object2 X: " + mockObject2.getX());
-        System.out.println("Camera Left Limit: " + mockCamera.getLeftCamLimit());
-        System.out.println("Camera Right Limit: " + mockCamera.getRightCamLimit());
-
         viewerGame.draw(mockStateGame, mockGui);
 
         verify(mockGui).clear();
