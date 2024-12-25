@@ -7,7 +7,6 @@ import org.grupogjl.model.game.elements.generalobjects.GameObject;
 import org.grupogjl.state.StateGame;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 
 import java.io.IOException;
 import java.util.List;
@@ -80,6 +79,111 @@ class ViewerGameTest {
         verify(mockGui).clear();
         verify(mockGui).drawImage(1.0f, 2.0f, "object1.png");
         verify(mockGui).drawImage(7.0f, 8.0f, "object2.png"); // Ensure this is invoked
+        verify(mockGui).drawImage(5.0f, 10.0f, "mario.png");
+        verify(mockGui).drawMenuText(1, 8, "coins: 10");
+        verify(mockGui).drawMenuText(1, 24, "lives: 3");
+    }
+
+    @Test
+    void testDraw_ObjectAtLeftBoundary() throws IOException {
+        when(mockStateGame.isGameOver()).thenReturn(false);
+        when(mockMario.getVirtX(mockCamera)).thenReturn(5.0f);
+        when(mockMario.getVirtY()).thenReturn(10.0f);
+        when(mockMario.getImage()).thenReturn("mario.png");
+        when(mockMario.getCoins()).thenReturn(10);
+        when(mockMario.getLives()).thenReturn(3);
+
+        when(mockObject1.getVirtX(mockCamera)).thenReturn(0.0f);
+        when(mockObject1.getVirtY()).thenReturn(2.0f);
+        when(mockObject1.getImage()).thenReturn("object1.png");
+        when(mockObject1.getX()).thenReturn(0f);
+
+        when(mockCamera.getLeftCamLimit()).thenReturn(0f);
+        when(mockCamera.getRightCamLimit()).thenReturn(10f);
+
+        viewerGame.draw(mockStateGame, mockGui);
+
+        verify(mockGui).clear();
+        verify(mockGui).drawImage(0.0f, 2.0f, "object1.png");
+        verify(mockGui).drawImage(5.0f, 10.0f, "mario.png");
+        verify(mockGui).drawMenuText(1, 8, "coins: 10");
+        verify(mockGui).drawMenuText(1, 24, "lives: 3");
+    }
+
+    @Test
+    void testDraw_ObjectAtRightBoundary() throws IOException {
+        when(mockStateGame.isGameOver()).thenReturn(false);
+        when(mockMario.getVirtX(mockCamera)).thenReturn(5.0f);
+        when(mockMario.getVirtY()).thenReturn(10.0f);
+        when(mockMario.getImage()).thenReturn("mario.png");
+        when(mockMario.getCoins()).thenReturn(10);
+        when(mockMario.getLives()).thenReturn(3);
+
+        when(mockObject1.getVirtX(mockCamera)).thenReturn(10.0f);
+        when(mockObject1.getVirtY()).thenReturn(2.0f);
+        when(mockObject1.getImage()).thenReturn("object1.png");
+        when(mockObject1.getX()).thenReturn(10f);
+
+        when(mockCamera.getLeftCamLimit()).thenReturn(0f);
+        when(mockCamera.getRightCamLimit()).thenReturn(10f);
+
+        viewerGame.draw(mockStateGame, mockGui);
+
+        verify(mockGui).clear();
+        verify(mockGui).drawImage(10.0f, 2.0f, "object1.png");
+        verify(mockGui).drawImage(5.0f, 10.0f, "mario.png");
+        verify(mockGui).drawMenuText(1, 8, "coins: 10");
+        verify(mockGui).drawMenuText(1, 24, "lives: 3");
+    }
+
+    @Test
+    void testDraw_ObjectOutsideLeftBoundary() throws IOException {
+        // Arrange
+        when(mockStateGame.isGameOver()).thenReturn(false);
+        when(mockMario.getVirtX(mockCamera)).thenReturn(5.0f);
+        when(mockMario.getVirtY()).thenReturn(10.0f);
+        when(mockMario.getImage()).thenReturn("mario.png");
+        when(mockMario.getCoins()).thenReturn(10);
+        when(mockMario.getLives()).thenReturn(3);
+
+        when(mockObject1.getVirtX(mockCamera)).thenReturn(-1.0f);
+        when(mockObject1.getVirtY()).thenReturn(2.0f);
+        when(mockObject1.getImage()).thenReturn("object1.png");
+        when(mockObject1.getX()).thenReturn(-2f); // Ensure it is outside the left boundary
+
+        when(mockCamera.getLeftCamLimit()).thenReturn(0f);
+        when(mockCamera.getRightCamLimit()).thenReturn(10f);
+
+        viewerGame.draw(mockStateGame, mockGui);
+
+        verify(mockGui).clear();
+        verify(mockGui, never()).drawImage(anyFloat(), anyFloat(), eq("object1.png"));
+        verify(mockGui).drawImage(5.0f, 10.0f, "mario.png");
+        verify(mockGui).drawMenuText(1, 8, "coins: 10");
+        verify(mockGui).drawMenuText(1, 24, "lives: 3");
+    }
+
+    @Test
+    void testDraw_ObjectOutsideRightBoundary() throws IOException {
+        when(mockStateGame.isGameOver()).thenReturn(false);
+        when(mockMario.getVirtX(mockCamera)).thenReturn(5.0f);
+        when(mockMario.getVirtY()).thenReturn(10.0f);
+        when(mockMario.getImage()).thenReturn("mario.png");
+        when(mockMario.getCoins()).thenReturn(10);
+        when(mockMario.getLives()).thenReturn(3);
+
+        when(mockObject1.getVirtX(mockCamera)).thenReturn(11.0f);
+        when(mockObject1.getVirtY()).thenReturn(2.0f);
+        when(mockObject1.getImage()).thenReturn("object1.png");
+        when(mockObject1.getX()).thenReturn(11f);
+
+        when(mockCamera.getLeftCamLimit()).thenReturn(0f);
+        when(mockCamera.getRightCamLimit()).thenReturn(10f);
+
+        viewerGame.draw(mockStateGame, mockGui);
+
+        verify(mockGui).clear();
+        verify(mockGui, never()).drawImage(anyFloat(), anyFloat(), eq("object1.png"));
         verify(mockGui).drawImage(5.0f, 10.0f, "mario.png");
         verify(mockGui).drawMenuText(1, 8, "coins: 10");
         verify(mockGui).drawMenuText(1, 24, "lives: 3");
