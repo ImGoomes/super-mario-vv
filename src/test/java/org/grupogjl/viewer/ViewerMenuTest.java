@@ -1,6 +1,7 @@
+package org.grupogjl.viewer;
+
 import org.grupogjl.gui.GeneralGui;
 import org.grupogjl.state.StateMenu;
-import org.grupogjl.viewer.ViewerMenu;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +11,7 @@ import java.util.Vector;
 
 import static org.mockito.Mockito.*;
 
-public class ViewerMenuTest {
+class ViewerMenuTest {
 
     private ViewerMenu viewerMenu;
     private GeneralGui mockGui;
