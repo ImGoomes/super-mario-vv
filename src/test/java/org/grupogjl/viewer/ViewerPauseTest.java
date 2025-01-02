@@ -37,7 +37,7 @@ public class ViewerPauseTest {
     }
 
     @Test
-    public void testDrawWithMultipleButtons() throws IOException {
+    public void testDraw_WithMultipleButtons() throws IOException {
         Vector<Button> buttons = new Vector<>();
         Button button1 = mock(Button.class);
         Button button2 = mock(Button.class);
@@ -64,21 +64,19 @@ public class ViewerPauseTest {
     }
 
     @Test
-    public void testDrawWithNoButtons() throws IOException {
+    public void testDraw_WithNoButtons() throws IOException {
         when(statePause.getModel().getButtons()).thenReturn(new Vector<>());
         doReturn((byte) 0).when(pauseModel).getSelectedButton();
 
         viewer.draw(statePause, gui);
 
-        // Verify no buttons are drawn
         verify(gui, never()).drawMenuText(anyInt(), anyInt(), anyString(), anyString());
 
-        // Verify refresh is called
         verify(gui).refresh();
     }
 
     @Test
-    public void testDrawWithSingleButton() throws IOException {
+    public void testDraw_WithSingleButton() throws IOException {
         Vector<Button> buttons = new Vector<>();
         Button button = mock(Button.class);
 
@@ -90,10 +88,8 @@ public class ViewerPauseTest {
 
         viewer.draw(statePause, gui);
 
-        // Verify button rendering
         verify(gui).drawMenuText((416 - "Resume".length() * 8) / 2 + 1, 89, "Resume", "#ea9e22");
 
-        // Verify refresh is called
         verify(gui).refresh();
     }
 }
