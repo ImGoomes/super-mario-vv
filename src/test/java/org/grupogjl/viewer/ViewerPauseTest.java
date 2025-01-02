@@ -2,7 +2,6 @@ package org.grupogjl.viewer;
 
 import org.grupogjl.gui.GeneralGui;
 import org.grupogjl.model.game.elements.buttons.Button;
-import org.grupogjl.model.game.elements.menu.MenuModel;
 import org.grupogjl.model.game.elements.pause.PauseModel;
 import org.grupogjl.state.StatePause;
 import org.junit.Before;
