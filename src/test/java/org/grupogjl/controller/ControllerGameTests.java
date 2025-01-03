@@ -14,7 +14,7 @@ import java.io.IOException;
 
 import static org.mockito.Mockito.*;
 
-class ControllerGamesTests {
+class ControllerGameTests {
 
     private ControllerGame controllerGame;
     private Game mockGame;
