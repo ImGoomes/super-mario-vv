@@ -19,7 +19,6 @@ class ControllerSurprisesTest {
 
     @BeforeEach
     void setup() {
-        // Create a spy of ControllerSurprises to monitor method calls
         controllerSurprises = spy(new ControllerSurprises());
         level = mock(Level.class);
         surprises = new ArrayList<>();
@@ -28,25 +27,21 @@ class ControllerSurprisesTest {
 
     @Test
     void testStep_VerifyUpdateStatusAndInteractions() {
-        // Arrange
-        GeneralGui.ACTION action = GeneralGui.ACTION.RIGHT; // Example action
+        GeneralGui.ACTION action = GeneralGui.ACTION.RIGHT;
         long time = 1000L;
 
         Surprise activeSurprise = mock(Surprise.class);
         when(activeSurprise.isActivated()).thenReturn(true);
         surprises.add(activeSurprise);
 
-        // Act
         controllerSurprises.step(level, action, time);
 
-        // Assert
-        verify(controllerSurprises, times(1)).updateStatus(level, time); // Verify updateStatus is called
-        verify(level, times(1)).setSurprises(surprises); // Verify the surprises list is updated
+        verify(controllerSurprises, times(1)).updateStatus(level, time);
+        verify(level, times(1)).setSurprises(surprises);
     }
 
     @Test
     void testUpdateStatus_RemovesInactiveSurprises() {
-        // Arrange
         Surprise activeSurprise = mock(Surprise.class);
         when(activeSurprise.isActivated()).thenReturn(true);
 
@@ -56,28 +51,23 @@ class ControllerSurprisesTest {
         surprises.add(activeSurprise);
         surprises.add(inactiveSurprise);
 
-        // Act
         controllerSurprises.updateStatus(level, 1000L);
 
-        // Assert
-        assert surprises.size() == 1; // Only active surprise remains
-        verify(activeSurprise, times(1)).updateLocation(); // Active surprise updates location
-        verify(inactiveSurprise, never()).updateLocation(); // Inactive surprise does not update location
-        verify(level, times(1)).setSurprises(surprises); // Surprises list is updated in level
+        assert surprises.size() == 1;
+        verify(activeSurprise, times(1)).updateLocation();
+        verify(inactiveSurprise, never()).updateLocation();
+        verify(level, times(1)).setSurprises(surprises);
     }
 
     @Test
     void testUpdateStatus_UpdatesActiveSurprises() {
-        // Arrange
         Surprise activeSurprise = mock(Surprise.class);
         when(activeSurprise.isActivated()).thenReturn(true);
         surprises.add(activeSurprise);
 
-        // Act
         controllerSurprises.updateStatus(level, 1000L);
 
-        // Assert
-        verify(activeSurprise, times(1)).updateLocation(); // Active surprise updates location
-        verify(level, times(1)).setSurprises(surprises); // Surprises list is updated in level
+        verify(activeSurprise, times(1)).updateLocation();
+        verify(level, times(1)).setSurprises(surprises);
     }
 }
