@@ -2,6 +2,7 @@ package org.grupogjl.controller.game.physicalobjects;
 
 import org.grupogjl.gui.GeneralGui;
 import org.grupogjl.model.game.elements.Mario;
+import org.grupogjl.model.game.elements.blocks.Pipe;
 import org.grupogjl.model.game.elements.camera.Camera;
 import org.grupogjl.model.game.elements.generalobjects.GameObject;
 import org.grupogjl.model.game.elements.level.Level;
@@ -37,11 +38,42 @@ class ControllerMarioTest {
     }
 
     @Test
-    void test_Step() {
+    void testMoveMario_Right() {
         controllerMario.step(level, GeneralGui.ACTION.RIGHT, 1000L);
 
         verify(mario, times(1)).moveRight();
         verify(camera, times(1)).updateCamera(mario);
+    }
+
+    @Test
+    void testMoveMario_Left() {
+        controllerMario.step(level, GeneralGui.ACTION.LEFT, 1000L);
+
+        verify(mario, times(1)).moveLeft();
+        verify(camera, times(1)).updateCamera(mario);
+    }
+
+    @Test
+    void testMoveMario_Down() {
+        Pipe pipe = mock(Pipe.class);
+        when(pipe.getX()).thenReturn(5.0f);
+        when(pipe.getY()).thenReturn(10.0f);
+        when(pipe.getHeight()).thenReturn(2.0f);
+        Pipe connectionPipe = mock(Pipe.class);
+        when(connectionPipe.getX()).thenReturn(15.0f);
+        when(connectionPipe.getY()).thenReturn(20.0f);
+        when(connectionPipe.getHeight()).thenReturn(2.0f);
+        when(pipe.getConection()).thenReturn(connectionPipe);
+
+        objects.add(pipe);
+
+        when(mario.getX()).thenReturn(5.1f);
+        when(mario.getY()).thenReturn(8.0f);
+
+        controllerMario.moveMario(GeneralGui.ACTION.DOWN, mario, objects);
+
+        verify(mario, times(1)).setX(15.0f);
+        verify(mario, times(1)).setY(18.0f);
     }
 
     @Test
@@ -90,6 +122,97 @@ class ControllerMarioTest {
         controllerMario.moveMario(GeneralGui.ACTION.NONE, mario, objects);
 
         verify(mario, times(1)).setVx(0);
+    }
+
+    @Test
+    void testUpdateMarioStatus_DisableInvincibilityAndHitCooldown() {
+        when(mario.getInvencibleTime()).thenReturn(0);
+        when(mario.isStateInvencible()).thenReturn(true);
+        when(mario.isHitCooldown()).thenReturn(true);
+
+        controllerMario.updateMarioStatus(level);
+
+        verify(mario, times(1)).setStateInvencible(false);
+        verify(mario, times(1)).setHitCooldown(false);
+    }
+
+    @Test
+    void testUpdateMarioStatus_HitCooldownConditionFalse() {
+        when(mario.getInvencibleTime()).thenReturn(0);
+        when(mario.isStateInvencible()).thenReturn(true);
+        when(mario.isHitCooldown()).thenReturn(false);
+
+        controllerMario.updateMarioStatus(level);
+
+        verify(mario, times(1)).setStateInvencible(false);
+    }
+
+    @Test
+    void testUpdateMarioStatus_DecrementInvincibilityTime() {
+        when(mario.getInvencibleTime()).thenReturn(5);
+        when(mario.isStateInvencible()).thenReturn(true);
+
+        controllerMario.updateMarioStatus(level);
+
+        verify(mario, times(1)).setInvencibleTime(4);
+    }
+
+    @Test
+    void testUpdateMarioStatus_InvencibleTimeAndStateInvencibleFalse() {
+        when(mario.getInvencibleTime()).thenReturn(0);
+        when(mario.isStateInvencible()).thenReturn(false);
+
+        controllerMario.updateMarioStatus(level);
+    }
+
+    @Test
+    void testUpdateMarioStatus_InvencibleTimeFalseAndStateInvencibleTrue() {
+        when(mario.getInvencibleTime()).thenReturn(0);
+        when(mario.isStateInvencible()).thenReturn(true);
+
+        controllerMario.updateMarioStatus(level);
+    }
+
+    @Test
+    void testUpdateMarioStatus_InvencibleTimeTrueAndStateInvencibleFalse() {
+        when(mario.getInvencibleTime()).thenReturn(5);
+        when(mario.isStateInvencible()).thenReturn(false);
+
+        controllerMario.updateMarioStatus(level);
+    }
+
+    @Test
+    void testTransportMario() {
+        Pipe pipe = mock(Pipe.class);
+        when(pipe.getX()).thenReturn(5.0f);
+        when(pipe.getY()).thenReturn(10.0f);
+        when(pipe.getHeight()).thenReturn(2.0f);
+        Pipe connectionPipe = mock(Pipe.class);
+        when(connectionPipe.getX()).thenReturn(15.0f);
+        when(connectionPipe.getY()).thenReturn(20.0f);
+        when(connectionPipe.getHeight()).thenReturn(2.0f);
+        when(pipe.getConection()).thenReturn(connectionPipe);
+
+        objects.add(pipe);
+
+        when(mario.getX()).thenReturn(5.1f);
+        when(mario.getY()).thenReturn(8.0f);
+
+        controllerMario.transportMario(mario, objects);
+
+        verify(mario, times(1)).setX(15.0f);
+        verify(mario, times(1)).setY(18.0f);
+    }
+
+    @Test
+    void testMoveMario_ReduceVelocityWhenNone() {
+        when(mario.isJumping()).thenReturn(true);
+        when(mario.isFalling()).thenReturn(false);
+        when(mario.getVx()).thenReturn(8.0f);
+
+        controllerMario.moveMario(GeneralGui.ACTION.NONE, mario, objects);
+
+        verify(mario, times(1)).setVx(2.0f);
     }
 }
 
