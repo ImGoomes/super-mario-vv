@@ -1,7 +1,10 @@
 package org.grupogjl.controller;
 
 import org.grupogjl.Game;
+import org.grupogjl.commands.ExitToMenuCommand;
 import org.grupogjl.commands.GameCommand;
+import org.grupogjl.commands.GameOverCommand;
+import org.grupogjl.commands.PauseCommand;
 import org.grupogjl.controller.game.ControllerLevel;
 import org.grupogjl.gui.GeneralGui;
 import org.grupogjl.model.game.elements.Mario;
@@ -12,6 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 class ControllerGameTests {
@@ -112,5 +116,26 @@ class ControllerGameTests {
         verifyNoInteractions(mockGameOverCommand);
         verifyNoInteractions(mockExitToMenuCommand);
         verifyNoInteractions(mockPauseCommand);
+    }
+
+    @Test
+    public void testGet_ExitToMenuCommand() {
+        ControllerGame controllerGame = new ControllerGame();
+        assertTrue(controllerGame.getExitToMenuCommand() instanceof ExitToMenuCommand,
+                "getExitToMenuCommand should return an instance of ExitToMenuCommand");
+    }
+
+    @Test
+    public void testGet_PauseCommand() {
+        ControllerGame controllerGame = new ControllerGame();
+        assertTrue(controllerGame.getPauseCommand() instanceof PauseCommand,
+                "getPauseCommand should return an instance of PauseCommand");
+    }
+
+    @Test
+    public void testGet_GameOverCommand() {
+        ControllerGame controllerGame = new ControllerGame();
+        assertTrue(controllerGame.getGameOverCommand() instanceof GameOverCommand,
+                "getGameOverCommand should return an instance of GameOverCommand");
     }
 }
