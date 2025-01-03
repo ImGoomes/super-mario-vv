@@ -77,6 +77,13 @@ class ControllerMarioTest {
     }
 
     @Test
+    void testMoveMario_JumpAction() {
+        controllerMario.moveMario(GeneralGui.ACTION.UP, mario, objects);
+
+        verify(mario, times(1)).jump();
+    }
+
+    @Test
     void testUpdateMarioStatus_ResetIfBelowLevel() {
         when(mario.getY()).thenReturn(1001f);
         when(level.getHeight()).thenReturn(1000);
@@ -95,13 +102,6 @@ class ControllerMarioTest {
 
         verify(mario, times(1)).setLives(4);
         verify(mario, times(1)).setCoins(0);
-    }
-
-    @Test
-    void testMoveMario_JumpAction() {
-        controllerMario.moveMario(GeneralGui.ACTION.UP, mario, objects);
-
-        verify(mario, times(1)).jump();
     }
 
     @Test
@@ -182,7 +182,7 @@ class ControllerMarioTest {
     }
 
     @Test
-    void testTransportMario() {
+    void test_TransportMario() {
         Pipe pipe = mock(Pipe.class);
         when(pipe.getX()).thenReturn(5.0f);
         when(pipe.getY()).thenReturn(10.0f);
