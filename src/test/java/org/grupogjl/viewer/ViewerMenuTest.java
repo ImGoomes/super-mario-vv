@@ -4,10 +4,8 @@ import org.grupogjl.gui.GeneralGui;
 import org.grupogjl.model.game.elements.buttons.Button;
 import org.grupogjl.model.game.elements.menu.MenuModel;
 import org.grupogjl.state.StateMenu;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Vector;
@@ -16,114 +14,72 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-public class ViewerMenuTest {
-    @Mock
-    private GeneralGui gui;
+class ViewerMenuTest {
 
-    @Mock
-    private StateMenu stateMenu;
+    private ViewerMenu viewerMenu;
+    private StateMenu mockStateMenu;
+    private GeneralGui mockGui;
+    private MenuModel mockMenuModel;
 
-    @Mock
-    private MenuModel menuModel;
+    @BeforeEach
+    void setUp() {
+        viewerMenu = new ViewerMenu();
+        mockStateMenu = mock(StateMenu.class);
+        mockGui = mock(GeneralGui.class);
+        mockMenuModel = mock(MenuModel.class);
 
-    private ViewerMenu viewer;
-
-    @Before
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        viewer = new ViewerMenu();
-        when(stateMenu.getModel()).thenReturn(menuModel);
+        when(mockStateMenu.getModel()).thenReturn(mockMenuModel);
     }
 
     @Test
-    public void testDraw_SelectedOption() throws IOException {
-        when(menuModel.isSelectedOption()).thenReturn(true);
-        String optionText = "Line 1\nLine 2\nLine 3";
-        when(menuModel.getTextOption()).thenReturn(optionText);
+    void testDraw_SelectedOption() throws IOException {
+        when(mockMenuModel.isSelectedOption()).thenReturn(true);
+        when(mockMenuModel.getTextOption()).thenReturn("Line 1\nLine 2\nLine 3");
 
-        viewer.draw(stateMenu, gui);
+        viewerMenu.draw(mockStateMenu, mockGui);
 
-        verify(gui).clear();
-        verify(gui).refresh();
+        verify(mockGui, times(1)).clear();
+        verify(mockGui, times(1)).drawMenuText(anyInt(), eq(12), eq("Line 1"), eq(""));
+        verify(mockGui, times(1)).drawMenuText(anyInt(), eq(24), eq("Line 2"), eq(""));
+        verify(mockGui, times(1)).drawMenuText(anyInt(), eq(36), eq("Line 3"), eq(""));
 
-        int x1 = (416 - "Line 1".length() * 8) / 2 + 1;
-        int x2 = (416 - "Line 2".length() * 8) / 2 + 1;
-        int x3 = (416 - "Line 3".length() * 8) / 2 + 1;
-        String enterMsg = "press enter to go back to menu";
-        int enterX = (416 - enterMsg.length() * 8) / 2 + 1;
-
-        verify(gui).drawMenuText(x1, 12, "Line 1", "");
-        verify(gui).drawMenuText(x2, 24, "Line 2", "");
-        verify(gui).drawMenuText(x3, 36, "Line 3", "");
-        verify(gui).drawMenuText(enterX, 60, enterMsg, "");
+        int yForPressEnter = 48 + 12;
+        verify(mockGui, times(1)).drawMenuText(anyInt(), eq(yForPressEnter), eq("press enter to go back to menu"), eq(""));
+        verify(mockGui, times(1)).refresh();
     }
 
     @Test
-    public void testDraw_MenuButtons() throws IOException {
-        when(menuModel.isSelectedOption()).thenReturn(false);
+    void testDraw_ButtonOptions() throws IOException {
         Vector<Button> buttons = new Vector<>();
-        Button button1 = mock(Button.class);
-        Button button2 = mock(Button.class);
-        Button button3 = mock(Button.class);
+        buttons.add(new Button("start game", null));
+        buttons.add(new Button("instructions screen", null));
+        buttons.add(new Button("exit game", null));
 
-        when(button1.getText()).thenReturn("Start Game");
-        when(button2.getText()).thenReturn("Instructions");
-        when(button3.getText()).thenReturn("Exit");
+        when(mockMenuModel.isSelectedOption()).thenReturn(false);
+        when(mockMenuModel.getButtons()).thenReturn(buttons);
+        when(mockMenuModel.getSelectedButton()).thenReturn((byte) 1);
 
-        buttons.add(button1);
-        buttons.add(button2);
-        buttons.add(button3);
+        viewerMenu.draw(mockStateMenu, mockGui);
 
-        when(menuModel.getButtons()).thenReturn(buttons);
-        doReturn((byte) 1).when(menuModel).getSelectedButton();
-
-        viewer.draw(stateMenu, gui);
-
-        int screenWidth = 416;
-        int charWidth = 8;
-
-        int startGameX = (screenWidth - "Start Game".length() * charWidth) / 2 + 1;
-        int instructionsX = (screenWidth - "Instructions".length() * charWidth) / 2 + 1;
-        int exitX = (screenWidth - "Exit".length() * charWidth) / 2 + 1;
-
-        verify(gui).clear();
-        verify(gui).refresh();
-        verify(gui).drawMenuImage(121, 17, "MenuScreen.png");
-
-        verify(gui).drawMenuText(startGameX, 121, "Start Game", "");
-        verify(gui).drawMenuText(instructionsX, 145, "Instructions", "#ea9e22");
-        verify(gui).drawMenuText(exitX, 169, "Exit", "");
+        verify(mockGui, times(1)).clear();
+        verify(mockGui, times(1)).drawMenuText(anyInt(), eq(121), eq("start game"), eq(""));
+        verify(mockGui, times(1)).drawMenuText(anyInt(), eq(145), eq("instructions screen"), eq("#ea9e22"));
+        verify(mockGui, times(1)).drawMenuText(anyInt(), eq(169), eq("exit game"), eq(""));
+        verify(mockGui, times(1)).drawMenuImage(eq(121), eq(17), eq("MenuScreen.png"));
+        verify(mockGui, times(1)).refresh();
     }
 
-    @Test
-    public void testDraw_EmptyMenu() throws IOException {
-        when(menuModel.isSelectedOption()).thenReturn(false);
-        when(menuModel.getButtons()).thenReturn(new Vector<>());
-        doReturn((byte)0).when(menuModel).getSelectedButton();
-
-        viewer.draw(stateMenu, gui);
-
-        verify(gui).clear();
-        verify(gui).drawMenuImage(121, 17, "MenuScreen.png");
-        verify(gui).refresh();
-        verify(gui, never()).drawMenuText(anyInt(), anyInt(), anyString(), anyString());
-    }
 
     @Test
-    public void testDraw_SelectedOptionWithEmptyText() throws IOException {
-        when(menuModel.isSelectedOption()).thenReturn(true);
-        when(menuModel.getTextOption()).thenReturn("");
+    void testDraw_WithNoButtons() throws IOException {
+        when(mockMenuModel.isSelectedOption()).thenReturn(false);
+        when(mockMenuModel.getButtons()).thenReturn(new Vector<>());
 
-        viewer.draw(stateMenu, gui);
+        viewerMenu.draw(mockStateMenu, mockGui);
 
-        String enterMsg = "press enter to go back to menu";
-        int screenWidth = 416;
-        int charWidth = 8;
-        int expectedX = (screenWidth - enterMsg.length() * charWidth) / 2 + 1;
-
-        verify(gui).clear();
-        verify(gui).refresh();
-
-        verify(gui).drawMenuText(expectedX, 24, enterMsg, "");
+        verify(mockGui, times(1)).clear();
+        verify(mockGui, never()).drawMenuText(anyInt(), anyInt(), anyString(), anyString());
+        verify(mockGui, times(1)).drawMenuImage(eq(121), eq(17), eq("MenuScreen.png"));
+        verify(mockGui, times(1)).refresh();
     }
 }

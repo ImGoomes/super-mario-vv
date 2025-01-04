@@ -4,91 +4,70 @@ import org.grupogjl.gui.GeneralGui;
 import org.grupogjl.model.game.elements.buttons.Button;
 import org.grupogjl.model.game.elements.pause.PauseModel;
 import org.grupogjl.state.StatePause;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Vector;
 
 import static org.mockito.Mockito.*;
 
-public class ViewerPauseTest {
+class ViewerPauseTest {
 
-    @Mock
-    private GeneralGui gui;
+    private ViewerPause viewerPause;
+    private StatePause mockStatePause;
+    private GeneralGui mockGui;
+    private PauseModel mockPauseModel;
 
-    @Mock
-    private StatePause statePause;
+    @BeforeEach
+    void setUp() {
+        viewerPause = new ViewerPause();
+        mockStatePause = mock(StatePause.class);
+        mockGui = mock(GeneralGui.class);
+        mockPauseModel = mock(PauseModel.class);
 
-    private ViewerPause viewer;
-
-    @Mock
-    private PauseModel pauseModel;
-
-
-    @Before
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        viewer = new ViewerPause();
-        when(statePause.getModel()).thenReturn(pauseModel);
+        when(mockStatePause.getModel()).thenReturn(mockPauseModel);
     }
 
     @Test
-    public void testDraw_WithMultipleButtons() throws IOException {
+    void testDraw_SelectedButton() throws IOException {
         Vector<Button> buttons = new Vector<>();
-        Button button1 = mock(Button.class);
-        Button button2 = mock(Button.class);
-        Button button3 = mock(Button.class);
+        buttons.add(new Button("resume", null));
+        buttons.add(new Button("exit to menu", null));
 
-        when(button1.getText()).thenReturn("Resume");
-        when(button2.getText()).thenReturn("Settings");
-        when(button3.getText()).thenReturn("Quit");
+        when(mockPauseModel.getButtons()).thenReturn(buttons);
+        when(mockPauseModel.getSelectedButton()).thenReturn((byte) 0);
 
-        buttons.add(button1);
-        buttons.add(button2);
-        buttons.add(button3);
+        viewerPause.draw(mockStatePause, mockGui);
 
-        when(statePause.getModel().getButtons()).thenReturn(buttons);
-        doReturn((byte) 1).when(pauseModel).getSelectedButton();
-
-        viewer.draw(statePause, gui);
-
-        verify(gui).drawMenuText((416 - "Resume".length() * 8) / 2 + 1, 89, "Resume", "");
-        verify(gui).drawMenuText((416 - "Settings".length() * 8) / 2 + 1, 113, "Settings", "#ea9e22");
-        verify(gui).drawMenuText((416 - "Quit".length() * 8) / 2 + 1, 137, "Quit", "");
-
-        verify(gui).refresh();
+        verify(mockGui, times(1)).drawMenuText(eq((416 - "resume".length() * 8) / 2 + 1), eq(89), eq("resume"), eq("#ea9e22"));
+        verify(mockGui, times(1)).drawMenuText(eq((416 - "exit to menu".length() * 8) / 2 + 1), eq(113), eq("exit to menu"), eq(""));
+        verify(mockGui, times(1)).refresh();
     }
 
     @Test
-    public void testDraw_WithNoButtons() throws IOException {
-        when(statePause.getModel().getButtons()).thenReturn(new Vector<>());
-        doReturn((byte) 0).when(pauseModel).getSelectedButton();
-
-        viewer.draw(statePause, gui);
-
-        verify(gui, never()).drawMenuText(anyInt(), anyInt(), anyString(), anyString());
-
-        verify(gui).refresh();
-    }
-
-    @Test
-    public void testDraw_WithSingleButton() throws IOException {
+    void testDraw_NonSelectedButton() throws IOException {
         Vector<Button> buttons = new Vector<>();
-        Button button = mock(Button.class);
+        buttons.add(new Button("resume", null));
+        buttons.add(new Button("exit to menu", null));
 
-        when(button.getText()).thenReturn("Resume");
-        buttons.add(button);
+        when(mockPauseModel.getButtons()).thenReturn(buttons);
+        when(mockPauseModel.getSelectedButton()).thenReturn((byte) 1);
 
-        when(statePause.getModel().getButtons()).thenReturn(buttons);
-        doReturn((byte) 0).when(pauseModel).getSelectedButton();
+        viewerPause.draw(mockStatePause, mockGui);
 
-        viewer.draw(statePause, gui);
+        verify(mockGui, times(1)).drawMenuText(eq((416 - "resume".length() * 8) / 2 + 1), eq(89), eq("resume"), eq(""));
+        verify(mockGui, times(1)).drawMenuText(eq((416 - "exit to menu".length() * 8) / 2 + 1), eq(113), eq("exit to menu"), eq("#ea9e22"));
+        verify(mockGui, times(1)).refresh();
+    }
 
-        verify(gui).drawMenuText((416 - "Resume".length() * 8) / 2 + 1, 89, "Resume", "#ea9e22");
+    @Test
+    void testDraw_WithNoButtons() throws IOException {
+        when(mockPauseModel.getButtons()).thenReturn(new Vector<>());
 
-        verify(gui).refresh();
+        viewerPause.draw(mockStatePause, mockGui);
+
+        verify(mockGui, never()).drawMenuText(anyInt(), anyInt(), anyString(), anyString());
+        verify(mockGui, times(1)).refresh();
     }
 }
