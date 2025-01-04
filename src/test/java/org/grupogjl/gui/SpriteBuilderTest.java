@@ -54,4 +54,12 @@ class SpriteBuilderTest {
         assertNull(loadedImage);
         assertFalse(spriteBuilder.isInCache("nonexistent.png"));
     }
+
+    @Test
+    void testLoad_ValidImageResource() {
+        BufferedImage loadedImage = spriteBuilder.loadImage("coin.png");
+
+        assertNotNull(loadedImage);
+        assertTrue(spriteBuilder.isInCache("coin.png"));
+    }
 }
