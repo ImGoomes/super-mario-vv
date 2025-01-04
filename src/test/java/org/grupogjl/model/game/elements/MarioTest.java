@@ -45,38 +45,38 @@ class MarioTest {
     }
 
     @Test
-    void testMoveLeft() {
+    void testMove_Left() {
         mario.moveLeft();
         assertEquals(-0.5f, mario.getVx(), "Mario should move left with velocity -0.5");
     }
 
     @Test
-    void testMoveRight() {
+    void testMove_Right() {
         mario.moveRight();
         assertEquals(0.5f, mario.getVx(), "Mario should move right with velocity 0.5");
     }
 
     @Test
-    void testHandleWallCollision() {
+    void testHandle_WallCollision() {
         mario.handleWallColision(5.0f);
         assertEquals(5.0f, mario.getX(), "Mario's X-coordinate should reset to the wall limit");
         assertEquals(0.0f, mario.getVx(), "Mario's horizontal velocity should reset to 0");
     }
 
     @Test
-    void testNotifyStateLives() throws IOException {
+    void testNotify_StateLives() throws IOException {
         mario.notifyState("lives");
         verify(mockObserver, times(1)).resetLevel();
     }
 
     @Test
-    void testNotifyStateGoal() throws IOException {
+    void testNotify_StateGoal() throws IOException {
         mario.notifyState("goal");
         verify(mockObserver, times(1)).nextLevel();
     }
 
     @Test
-    void testHandleCollisionWithSurprise() {
+    void testHandle_CollisionWithSurprise() {
         Surprise mockSurprise = mock(Surprise.class);
         mario.handleCollision(mockSurprise, 'U');
         verify(mockSurprise, times(1)).activate(mario);
@@ -84,14 +84,14 @@ class MarioTest {
     }
 
     @Test
-    void testHandleCollisionWithEnemyNotInvincible() {
+    void testHandle_CollisionWithEnemyNotInvincible() {
         Enemy mockEnemy = mock(Enemy.class);
         mario.handleCollision(mockEnemy, 'L');
         assertEquals(2, mario.getLives(), "Mario should lose a life when hit by an enemy");
     }
 
     @Test
-    void testHandleCollisionWithEnemyJumping() {
+    void testHandle_CollisionWithEnemyJumping() {
         Enemy mockEnemy = mock(Enemy.class);
         when(mockEnemy.getLives()).thenReturn(1);
 
@@ -101,7 +101,7 @@ class MarioTest {
     }
 
     @Test
-    void testHandleCollisionWithGoalBlock() throws IOException {
+    void testHandle_CollisionWithGoalBlock() throws IOException {
         GoalBlock mockGoalBlock = mock(GoalBlock.class);
         mario.handleCollision(mockGoalBlock, 'U');
         verify(mockObserver, times(1)).nextLevel();
@@ -122,18 +122,18 @@ class MarioTest {
     }
 
     @Test
-    void testGetVirtX() {
+    void testGet_VirtX() {
         when(mockCamera.getLeftCamLimit()).thenReturn(5.0f);
         assertEquals(5.0f, mario.getVirtX(mockCamera), "getVirtX should calculate the virtual X correctly");
     }
 
     @Test
-    void testGetVirtY() {
+    void testGet_VirtY() {
         assertEquals(20.0f, mario.getVirtY(), "getVirtY should calculate the virtual Y correctly");
     }
 
     @Test
-    void testGetImage() {
+    void testGet_Image() {
         mario.setStateBig(true);
         String image = mario.getImage();
         assertTrue(image.equals("marioSuper.png") || image.equals("marioStarBig.png"), "Image should correspond to big Mario state");
