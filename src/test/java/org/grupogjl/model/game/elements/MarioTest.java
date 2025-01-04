@@ -9,8 +9,11 @@ import org.grupogjl.model.game.elements.surprises.Surprise;
 import org.grupogjl.state.StateGame;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -20,9 +23,11 @@ class MarioTest {
     private Mario mario;
     private StateGame mockObserver;
     private Camera mockCamera;
+    private Random mockRandom;
 
     @BeforeEach
     void setUp() {
+        mockRandom = mock(Random.class);
         mario = new Mario(10.0f, 20.0f, 1.0f, 1.0f);
         mockObserver = mock(StateGame.class);
         mockCamera = mock(Camera.class);
@@ -294,19 +299,93 @@ class MarioTest {
     }
 
     @Test
-    void testGet_Image() {
+    void testGet_ImageStateBig() {
         mario.setStateBig(true);
         String image = mario.getImage();
-        assertTrue(image.equals("marioSuper.png") || image.equals("marioStarBig.png"), "Image should correspond to big Mario state");
+        assertTrue(image.equals("marioSuper.png"), "Image should correspond to big Mario state");
+    }
 
+//    @Test
+//    public void testGet_ImageStateBig_WithStateInvencibleRandomBoolean_WithoutHitCooldown() {
+//        mario.setStateBig(true);
+//        mario.setStateInvencible(true);
+//        mario.setHitCooldown(false);
+//
+//        boolean conditionMet = false;
+//        for (int i = 0; i < 1000; i++) {
+//            String image = mario.getImage();
+//            if ("marioStarBig.png".equals(image)) {
+//                conditionMet = true;
+//                break;
+//            }
+//        }
+//
+//        assertTrue(conditionMet, "Condition for marioStarBig.png was never satisfied");
+//    }
+//
+//    @Test
+//    public void testGet_ImageStateBig_WithRandomBoolean_WithoutStateInvencibleHitCooldown() {
+//        mario.setStateBig(true);
+//        mario.setStateInvencible(false);
+//        mario.setHitCooldown(false);
+//        String image = mario.getImage();
+//
+//        assertTrue(image.equals("marioSuper.png"), "Image should correspond to big Mario state");
+//    }
+
+    @Test
+    void testGet_ImageStateBig_marioStarBig() {
+        mario.setStateBig(true);
+        mario.setStateInvencible(true);
+        mario.setHitCooldown(false);
+
+        boolean conditionMetStateBig = false;
+        for (int i = 0; i < 1000; i++) {
+            String image = mario.getImage();
+            if ("marioStarBig.png".equals(image)) {
+                conditionMetStateBig = true;
+                break;
+            }
+        }
+
+        assertTrue(conditionMetStateBig, "Condition for marioStarBig.png was satisfied");
+    }
+
+    @Test
+    void testGet_ImageStateFire_marioStarBig() {
+        mario.setStateBig(false);
         mario.setStateFire(true);
-        image = mario.getImage();
-        assertTrue(image.equals("marioSuper.png") || image.equals("marioStarBig.png"), "Image should correspond to fire Mario state");
+        mario.setStateInvencible(true);
+        mario.setHitCooldown(false);
 
+        boolean conditionMetStateFire = false;
+        for (int i = 0; i < 1000; i++) {
+            String image = mario.getImage();
+            if ("marioStarBig.png".equals(image)) {
+                conditionMetStateFire = true;
+                break;
+            }
+        }
+
+        assertTrue(conditionMetStateFire, "Condition for marioStarBig.png was satisfied");
+    }
+
+    @Test
+    void testGet_Image_hitMario() {
         mario.setStateBig(false);
         mario.setStateFire(false);
         mario.setStateInvencible(true);
-        image = mario.getImage();
-        assertTrue(image.equals("marioStar.png")  || image.equals("mario.png") || image.equals("hitMario.png"), "Image should correspond to invincible small Mario state");
+        mario.setHitCooldown(true);
+
+        boolean conditionMet = false;
+        for (int i = 0; i < 1000; i++) {
+            String image = mario.getImage();
+            if ("hitMario.png".equals(image)) {
+                conditionMet = true;
+                break;
+            }
+        }
+
+        assertTrue(conditionMet, "Condition for marioStarBig.png was satisfied");
     }
 }
