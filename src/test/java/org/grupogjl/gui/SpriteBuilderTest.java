@@ -18,7 +18,7 @@ class SpriteBuilderTest {
     }
 
     @Test
-    void testIsInCache() {
+    void testIs_InCache() {
         BufferedImage mockImage = Mockito.mock(BufferedImage.class);
         spriteBuilder.setToCache("testImage.png", mockImage);
 
@@ -27,7 +27,7 @@ class SpriteBuilderTest {
     }
 
     @Test
-    void testSetToCache() {
+    void testSet_ToCache() {
         BufferedImage mockImage = Mockito.mock(BufferedImage.class);
 
         spriteBuilder.setToCache("testImage.png", mockImage);
@@ -37,7 +37,7 @@ class SpriteBuilderTest {
     }
 
     @Test
-    void testLoadImageFromCache() {
+    void testLoad_ImageFromCache() {
         BufferedImage mockImage = Mockito.mock(BufferedImage.class);
         spriteBuilder.setToCache("cachedImage.png", mockImage);
 
@@ -48,7 +48,7 @@ class SpriteBuilderTest {
     }
 
     @Test
-    void testLoadImageResourceNotFound() {
+    void testLoad_ImageResourceNotFound() {
         BufferedImage loadedImage = spriteBuilder.loadImage("nonexistent.png");
 
         assertNull(loadedImage);

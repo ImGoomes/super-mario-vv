@@ -30,7 +30,7 @@ class LanternaGuiTest {
     }
 
     @Test
-    void testGetNextActionQuit() throws IOException {
+    void testGet_NextActionQuit() throws IOException {
         KeyStroke keyStroke = new KeyStroke('q', false, false);
         when(mockScreen.pollInput()).thenReturn(keyStroke);
 
@@ -40,7 +40,7 @@ class LanternaGuiTest {
     }
 
     @Test
-    void testGetNextActionArrowUp() throws IOException {
+    void testGet_NextActionArrowUp() throws IOException {
         KeyStroke keyStroke = new KeyStroke(KeyType.ArrowUp);
         when(mockScreen.pollInput()).thenReturn(keyStroke);
 
@@ -50,7 +50,7 @@ class LanternaGuiTest {
     }
 
     @Test
-    void testDrawPixel() {
+    void testDraw_Pixel() {
         TextGraphics mockTextGraphics = Mockito.mock(TextGraphics.class);
         when(mockScreen.newTextGraphics()).thenReturn(mockTextGraphics);
 
@@ -62,7 +62,7 @@ class LanternaGuiTest {
     }
 
     @Test
-    void testIsTransparent() {
+    void testIs_Transparent() {
         BufferedImage mockImage = Mockito.mock(BufferedImage.class);
         when(mockImage.getRGB(0, 0)).thenReturn(0x00FFFFFF);
 
@@ -72,7 +72,7 @@ class LanternaGuiTest {
     }
 
     @Test
-    void testDrawGameOver() throws IOException {
+    void testDraw_GameOver() throws IOException {
         TextGraphics mockTextGraphics = Mockito.mock(TextGraphics.class);
         BufferedImage mockImage = Mockito.mock(BufferedImage.class);
 
@@ -88,7 +88,7 @@ class LanternaGuiTest {
     }
 
     @Test
-    void testClear() {
+    void test_Clear() {
         TextGraphics mockTextGraphics = Mockito.mock(TextGraphics.class);
         when(mockScreen.newTextGraphics()).thenReturn(mockTextGraphics);
 
@@ -99,7 +99,7 @@ class LanternaGuiTest {
     }
 
     @Test
-    void testDrawMenuText() {
+    void testDraw_MenuText() {
         BufferedImage mockImage = Mockito.mock(BufferedImage.class);
         when(mockSpriteBuilder.loadImage("/Letters/A.png")).thenReturn(mockImage);
 
