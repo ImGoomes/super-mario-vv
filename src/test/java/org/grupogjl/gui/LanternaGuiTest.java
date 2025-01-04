@@ -1,10 +1,13 @@
 package org.grupogjl.gui;
 
+import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.screen.TerminalScreen;
+import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -55,6 +58,35 @@ class LanternaGuiTest {
                 }
             }
         }
+    }
+
+    @Test
+    void testDrawPixelIsCalledForNonTransparentPixels() {
+        assertDoesNotThrow(() -> {
+            DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory()
+                    .setInitialTerminalSize(new TerminalSize(10, 10));
+            Screen screen = new TerminalScreen(terminalFactory.createTerminal());
+            screen.startScreen();
+
+            LanternaGui lanternaGui = new LanternaGui(screen);
+
+            SpriteBuilder spriteBuilder = new SpriteBuilder() {
+                @Override
+                public BufferedImage loadImage(String filename) {
+                    BufferedImage testImage = new BufferedImage(2, 2, BufferedImage.TYPE_INT_ARGB);
+                    testImage.setRGB(0, 0, new Color(255, 0, 0, 255).getRGB());
+                    testImage.setRGB(1, 0, new Color(0, 255, 0, 255).getRGB());
+                    testImage.setRGB(0, 1, new Color(0, 0, 255, 0).getRGB());
+                    testImage.setRGB(1, 1, new Color(255, 255, 255, 255).getRGB());
+                    return testImage;
+                }
+            };
+            lanternaGui.setSpriteBuilder(spriteBuilder);
+
+            lanternaGui.drawMenuImage(0, 0, "testImage.png");
+
+            screen.stopScreen();
+        });
     }
 
     @Test
