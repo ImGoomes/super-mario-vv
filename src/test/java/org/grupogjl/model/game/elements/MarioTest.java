@@ -305,34 +305,6 @@ class MarioTest {
         assertTrue(image.equals("marioSuper.png"), "Image should correspond to big Mario state");
     }
 
-//    @Test
-//    public void testGet_ImageStateBig_WithStateInvencibleRandomBoolean_WithoutHitCooldown() {
-//        mario.setStateBig(true);
-//        mario.setStateInvencible(true);
-//        mario.setHitCooldown(false);
-//
-//        boolean conditionMet = false;
-//        for (int i = 0; i < 1000; i++) {
-//            String image = mario.getImage();
-//            if ("marioStarBig.png".equals(image)) {
-//                conditionMet = true;
-//                break;
-//            }
-//        }
-//
-//        assertTrue(conditionMet, "Condition for marioStarBig.png was never satisfied");
-//    }
-//
-//    @Test
-//    public void testGet_ImageStateBig_WithRandomBoolean_WithoutStateInvencibleHitCooldown() {
-//        mario.setStateBig(true);
-//        mario.setStateInvencible(false);
-//        mario.setHitCooldown(false);
-//        String image = mario.getImage();
-//
-//        assertTrue(image.equals("marioSuper.png"), "Image should correspond to big Mario state");
-//    }
-
     @Test
     void testGet_ImageStateBig_marioStarBig() {
         mario.setStateBig(true);
