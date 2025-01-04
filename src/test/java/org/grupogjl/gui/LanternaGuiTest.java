@@ -68,16 +68,6 @@ class LanternaGuiTest {
     }
 
     @Test
-    void testGet_NextActionArrowUp() throws IOException {
-        KeyStroke keyStroke = new KeyStroke(KeyType.ArrowUp);
-        when(mockScreen.pollInput()).thenReturn(keyStroke);
-
-        GeneralGui.ACTION action = lanternaGui.getNextAction();
-
-        assertEquals(GeneralGui.ACTION.UP, action);
-    }
-
-    @Test
     void testDraw_Pixel() {
         TextGraphics mockTextGraphics = Mockito.mock(TextGraphics.class);
         when(mockScreen.newTextGraphics()).thenReturn(mockTextGraphics);
@@ -160,5 +150,65 @@ class LanternaGuiTest {
         Screen actualScreen = (Screen) screenField.get(lanternaGui);
 
         assertEquals(newMockScreen, actualScreen);
+    }
+
+    @Test
+    void testGet_NextActionNone() throws IOException {
+        when(mockScreen.pollInput()).thenReturn(null);
+        assertEquals(GeneralGui.ACTION.NONE, lanternaGui.getNextAction());
+    }
+
+    @Test
+    void testGet_NextActionEOF() throws IOException {
+        when(mockScreen.pollInput()).thenReturn(new KeyStroke(KeyType.EOF));
+        assertEquals(GeneralGui.ACTION.QUIT, lanternaGui.getNextAction());
+    }
+
+    @Test
+    void testGet_NextActionQuitCharacter() throws IOException {
+        when(mockScreen.pollInput()).thenReturn(new KeyStroke('q', false, false));
+        assertEquals(GeneralGui.ACTION.QUIT, lanternaGui.getNextAction());
+    }
+
+    @Test
+    void testGet_NextActionArrowUp() throws IOException {
+        when(mockScreen.pollInput()).thenReturn(new KeyStroke(KeyType.ArrowUp));
+        assertEquals(GeneralGui.ACTION.UP, lanternaGui.getNextAction());
+    }
+
+    @Test
+    void testGet_NextActionArrowRight() throws IOException {
+        when(mockScreen.pollInput()).thenReturn(new KeyStroke(KeyType.ArrowRight));
+        assertEquals(GeneralGui.ACTION.RIGHT, lanternaGui.getNextAction());
+    }
+
+    @Test
+    void testGet_NextActionArrowDown() throws IOException {
+        when(mockScreen.pollInput()).thenReturn(new KeyStroke(KeyType.ArrowDown));
+        assertEquals(GeneralGui.ACTION.DOWN, lanternaGui.getNextAction());
+    }
+
+    @Test
+    void testGet_NextActionArrowLeft() throws IOException {
+        when(mockScreen.pollInput()).thenReturn(new KeyStroke(KeyType.ArrowLeft));
+        assertEquals(GeneralGui.ACTION.LEFT, lanternaGui.getNextAction());
+    }
+
+    @Test
+    void testGet_NextActionThrowBall() throws IOException {
+        when(mockScreen.pollInput()).thenReturn(new KeyStroke('b', false, false));
+        assertEquals(GeneralGui.ACTION.THROWBALL, lanternaGui.getNextAction());
+    }
+
+    @Test
+    void testGet_NextActionSelect() throws IOException {
+        when(mockScreen.pollInput()).thenReturn(new KeyStroke(KeyType.Enter));
+        assertEquals(GeneralGui.ACTION.SELECT, lanternaGui.getNextAction());
+    }
+
+    @Test
+    void testGet_NextActionUknown() throws IOException {
+        when(mockScreen.pollInput()).thenReturn(new KeyStroke(KeyType.Unknown));
+        assertEquals(GeneralGui.ACTION.NONE, lanternaGui.getNextAction());
     }
 }
