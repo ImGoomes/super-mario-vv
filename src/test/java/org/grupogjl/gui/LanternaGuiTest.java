@@ -9,24 +9,52 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.lang.reflect.Field;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class LanternaGuiTest {
 
+    private SpriteBuilder spriteBuilder;
     private Screen mockScreen;
     private SpriteBuilder mockSpriteBuilder;
     private LanternaGui lanternaGui;
 
     @BeforeEach
     void setUp() {
+        spriteBuilder = new SpriteBuilder();
         mockScreen = Mockito.mock(Screen.class);
         mockSpriteBuilder = Mockito.mock(SpriteBuilder.class);
         lanternaGui = new LanternaGui(mockScreen);
         lanternaGui.setSpriteBuilder(mockSpriteBuilder);
+    }
+
+    @Test
+    void testDraw_Image() {
+        String filename = "validImage.png";
+        float x = 1.0f;
+        float y = 1.0f;
+
+        BufferedImage mockImage = Mockito.mock(BufferedImage.class);
+        when(mockImage.getWidth()).thenReturn(100);
+        when(mockImage.getHeight()).thenReturn(100);
+        when(mockSpriteBuilder.loadImage(filename)).thenReturn(mockImage);
+
+        lanternaGui.drawImage(x, y, filename);
+
+        for (int i = 0; i < mockImage.getWidth(); i++) {
+            for (int j = 0; j < mockImage.getHeight(); j++) {
+                if (!lanternaGui.isTransparent(mockImage, i, j)) {
+                    Color c = new Color(mockImage.getRGB(i, j));
+                    String color = "#" + Integer.toHexString(c.getRGB()).substring(2);
+                    verify(lanternaGui).drawPixel((int) Math.floor(x * 16 + i), (int) Math.floor(y * 16 + j), color);
+                }
+            }
+        }
     }
 
     @Test
@@ -101,10 +129,36 @@ class LanternaGuiTest {
     @Test
     void testDraw_MenuText() {
         BufferedImage mockImage = Mockito.mock(BufferedImage.class);
-        when(mockSpriteBuilder.loadImage("/Letters/A.png")).thenReturn(mockImage);
+        when(mockSpriteBuilder.loadImage(anyString())).thenReturn(mockImage);
 
-        lanternaGui.drawMenuText(0, 0, "A");
+        lanternaGui.drawMenuText(0, 0, " ", "#FFFFFF");
+        verify(mockSpriteBuilder, never()).loadImage(anyString());
 
+        lanternaGui.drawMenuText(0, 0, ".", "#FFFFFF");
+        verify(mockSpriteBuilder).loadImage("/Letters/dot.png");
+
+        lanternaGui.drawMenuText(0, 0, ":", "#FFFFFF");
+        verify(mockSpriteBuilder).loadImage("/Letters/doubledot.png");
+
+        lanternaGui.drawMenuText(0, 0, "-", "#FFFFFF");
+        verify(mockSpriteBuilder).loadImage("/Letters/hifen.png");
+
+        lanternaGui.drawMenuText(0, 0, "!", "#FFFFFF");
+        verify(mockSpriteBuilder).loadImage("/Letters/exclamationMark.png");
+
+        lanternaGui.drawMenuText(0, 0, "A", "#FFFFFF");
         verify(mockSpriteBuilder).loadImage("/Letters/A.png");
+    }
+
+    @Test
+    void testSet_Screen() throws NoSuchFieldException, IllegalAccessException {
+        Screen newMockScreen = Mockito.mock(Screen.class);
+        lanternaGui.setScreen(newMockScreen);
+
+        Field screenField = LanternaGui.class.getDeclaredField("screen");
+        screenField.setAccessible(true);
+        Screen actualScreen = (Screen) screenField.get(lanternaGui);
+
+        assertEquals(newMockScreen, actualScreen);
     }
 }
