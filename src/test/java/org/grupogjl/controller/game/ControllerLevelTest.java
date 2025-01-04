@@ -17,6 +17,7 @@ import static org.mockito.Mockito.*;
 class ControllerLevelTest {
 
     private ControllerLevel controllerLevel;
+    private PhysicalObject mockPhysicalObject;
     private Level mockLevel;
     private Mario mockMario;
     private Camera mockCamera;
@@ -25,6 +26,7 @@ class ControllerLevelTest {
     @BeforeEach
     void setUp() {
         controllerLevel = new ControllerLevel();
+        mockPhysicalObject = mock(PhysicalObject.class);
         mockLevel = mock(Level.class);
         mockMario = mock(Mario.class);
         mockCamera = mock(Camera.class);
@@ -36,7 +38,7 @@ class ControllerLevelTest {
     }
 
     @Test
-    void testStepWithValidInputs() {
+    void testStep_WithValidInputs() {
         GeneralGui.ACTION mockAction = GeneralGui.ACTION.RIGHT;
         long mockTime = 100L;
 
@@ -48,7 +50,7 @@ class ControllerLevelTest {
     }
 
     @Test
-    void testCheckCollisionsMarioWithObjects() {
+    void testCheck_CollisionsMarioWithObjects() {
         // Arrange: Create a mock PhysicalObject to avoid casting issues
         PhysicalObject mockPhysicalObject = mock(PhysicalObject.class);
         when(mockPhysicalObject.getX()).thenReturn(10.0f);
@@ -57,13 +59,10 @@ class ControllerLevelTest {
         when(mockPhysicalObject.getHeight()).thenReturn(2.0f);
         when(mockPhysicalObject.collidesWith(any())).thenReturn(true);
 
-        // Add the mock PhysicalObject to the objects list
         mockObjects.add(mockPhysicalObject);
 
-        // Act: Call the method under test
         controllerLevel.checkCollisions(mockMario, mockObjects, mockCamera);
 
-        // Assert: Verify that the collision logic interacted with the physical object
         verify(mockPhysicalObject, atLeastOnce()).getX();
         verify(mockPhysicalObject, atLeastOnce()).getVx();
         verify(mockMario, atLeastOnce()).setFalling(true);
@@ -71,7 +70,7 @@ class ControllerLevelTest {
 
 
     @Test
-    void testCheckPhysicalCollisionsYWithFallingObject() {
+    void testCheck_PhysicalCollisionsYWithFallingObject() {
         GameObject mockBlock = mock(GameObject.class);
         when(mockBlock.getX()).thenReturn(5.0f);
         when(mockBlock.getY()).thenReturn(5.0f);
@@ -89,7 +88,7 @@ class ControllerLevelTest {
     }
 
     @Test
-    void testCheckPhysicalCollisionsXWithMovingObject() {
+    void testCheck_PhysicalCollisionsXWithMovingObject() {
         GameObject mockObject = mock(GameObject.class);
         when(mockObject.getX()).thenReturn(10.0f);
 
@@ -105,7 +104,7 @@ class ControllerLevelTest {
     }
 
     @Test
-    void testMarioJumpingAndFalling() {
+    void testMario_JumpingAndFalling() {
         when(mockMario.isJumping()).thenReturn(true);
         when(mockMario.isFalling()).thenReturn(false);
 
@@ -115,12 +114,158 @@ class ControllerLevelTest {
     }
 
     @Test
-    void testCameraInteractionDuringCollision() {
+    void testCamera_InteractionDuringCollision() {
         when(mockCamera.getLeftCamLimit()).thenReturn(0.0f);
 
         controllerLevel.CheckPhysicalCollisionsX(mockMario, mockObjects, mockCamera);
 
         verify(mockCamera, atLeastOnce()).getLeftCamLimit();
         verify(mockMario, atLeastOnce()).getX();
+    }
+
+    @Test
+    void testCheck_PhysicalCollisionsYWithJumpingObject() {
+        PhysicalObject mockPhysicalObject = mock(PhysicalObject.class);
+        GameObject mockObject = mock(GameObject.class);
+
+        when(mockPhysicalObject.getVy()).thenReturn(1.0f);
+        when(mockPhysicalObject.isJumping()).thenReturn(true);
+        when(mockPhysicalObject.getY()).thenReturn(10.0f);
+        when(mockPhysicalObject.collidesWith(mockObject)).thenReturn(true);
+
+        List<GameObject> objects = new ArrayList<>();
+        objects.add(mockObject);
+
+        controllerLevel.CheckPhysicalCollisionsY(mockPhysicalObject, objects);
+
+        verify(mockPhysicalObject, atLeastOnce()).collidesWith(mockObject);
+        verify(mockPhysicalObject, atLeastOnce()).handleCollision(mockObject, 'U');
+    }
+
+    @Test
+    void testCheck_PhysicalCollisionsYWithFallingObjectD() {
+        PhysicalObject mockPhysicalObject = mock(PhysicalObject.class);
+        GameObject mockBlock = mock(GameObject.class);
+
+        when(mockPhysicalObject.getVy()).thenReturn(3.0f);
+        when(mockPhysicalObject.isJumping()).thenReturn(false);
+        when(mockPhysicalObject.getY()).thenReturn(5.0f);
+        when(mockPhysicalObject.getHeight()).thenReturn(1.0f);
+        when(mockPhysicalObject.collidesWith(mockBlock)).thenReturn(true);
+
+        List<GameObject> objects = new ArrayList<>();
+        objects.add(mockBlock);
+
+        controllerLevel.CheckPhysicalCollisionsY(mockPhysicalObject, objects);
+
+        verify(mockPhysicalObject, atLeastOnce()).setY(anyFloat());
+        verify(mockPhysicalObject, atLeastOnce()).collidesWith(mockBlock);
+        verify(mockPhysicalObject, atLeastOnce()).handleCollision(mockBlock, 'D');
+        verify(mockPhysicalObject, atLeastOnce()).getVy();
+    }
+
+    @Test
+    void testCheck_PhysicalCollisionsY_ReachesMovementStep() {
+        PhysicalObject mockPhysicalObject = mock(PhysicalObject.class);
+        GameObject mockBlock = mock(GameObject.class);
+
+        when(mockPhysicalObject.getVy()).thenReturn(3.0f);
+        when(mockPhysicalObject.isJumping()).thenReturn(false);
+        when(mockPhysicalObject.getY()).thenReturn(5.0f);
+        when(mockPhysicalObject.getHeight()).thenReturn(1.0f);
+        when(mockPhysicalObject.collidesWith(mockBlock)).thenReturn(false);
+
+        List<GameObject> objects = new ArrayList<>();
+        objects.add(mockBlock);
+
+        controllerLevel.CheckPhysicalCollisionsY(mockPhysicalObject, objects);
+
+        verify(mockPhysicalObject, atLeastOnce()).setY(anyFloat());
+        verify(mockPhysicalObject, atLeastOnce()).getVy();
+    }
+
+    @Test
+    void testCheckPhysicalCollisionsX_WithLeftCameraLimitCollision() {
+        when(mockPhysicalObject.getX()).thenReturn(0.0f);
+        when(mockPhysicalObject.getVx()).thenReturn(-1.0f);
+        when(mockCamera.getLeftCamLimit()).thenReturn(0.0f);
+
+        controllerLevel.CheckPhysicalCollisionsX(mockPhysicalObject, mockObjects, mockCamera);
+
+        verify(mockPhysicalObject, times(1)).handleWallColision(0.0f);
+    }
+
+    @Test
+    void testCheckPhysicalCollisionsX_EnemyCollisionFromLeft() {
+        PhysicalObject mainObject = mock(PhysicalObject.class);
+        PhysicalObject enemy = mock(PhysicalObject.class);
+        Camera camera = mock(Camera.class);
+        List<GameObject> objects = new ArrayList<>();
+        objects.add(enemy);
+
+        when(mainObject.getX()).thenReturn(5.0f);
+        when(mainObject.getY()).thenReturn(5.0f);
+        when(mainObject.getVx()).thenReturn(0.0f);
+        when(enemy.getX()).thenReturn(6.0f);
+        when(enemy.getY()).thenReturn(4.0f);
+        when(mainObject.collidesWithPhysical(enemy, Math.abs(enemy.getVx()), -0.2f)).thenReturn(true);
+
+        controllerLevel.CheckPhysicalCollisionsX(mainObject, objects, camera);
+
+        verify(mainObject, times(1)).handleCollision(enemy, 'L');
+    }
+
+    @Test
+    void testCheckPhysicalCollisionsX_EnemyCollisionFromRight() {
+        PhysicalObject mainObject = mock(PhysicalObject.class);
+        PhysicalObject enemy = mock(PhysicalObject.class);
+        Camera camera = mock(Camera.class);
+        List<GameObject> objects = new ArrayList<>();
+        objects.add(enemy);
+
+        when(mainObject.getX()).thenReturn(5.0f);
+        when(mainObject.getY()).thenReturn(5.0f);
+        when(mainObject.getVx()).thenReturn(0.0f);
+        when(enemy.getX()).thenReturn(4.0f);
+        when(enemy.getY()).thenReturn(4.0f);
+        when(mainObject.collidesWithPhysical(enemy, Math.abs(enemy.getVx()), -0.2f)).thenReturn(true);
+
+        controllerLevel.CheckPhysicalCollisionsX(mainObject, objects, camera);
+
+        verify(mainObject, times(1)).handleCollision(enemy, 'R');
+    }
+
+    @Test
+    void testCheckPhysicalCollisionsX_CollisionWithObjectMovingRight() {
+        PhysicalObject mainObject = mock(PhysicalObject.class);
+        GameObject object = mock(GameObject.class);
+        Camera camera = mock(Camera.class);
+        List<GameObject> objects = new ArrayList<>();
+        objects.add(object);
+
+        when(mainObject.getX()).thenReturn(5.0f);
+        when(mainObject.getVx()).thenReturn(3.0f);
+        when(mainObject.collidesWith(object)).thenReturn(true);
+
+        controllerLevel.CheckPhysicalCollisionsX(mainObject, objects, camera);
+
+        verify(mainObject, times(1)).handleCollision(object, 'R');
+    }
+
+    @Test
+    void testCheckPhysicalCollisionsX_CollisionWithObjectMovingLeft() {
+        PhysicalObject mainObject = mock(PhysicalObject.class);
+        GameObject object = mock(GameObject.class);
+        Camera camera = mock(Camera.class);
+        List<GameObject> objects = new ArrayList<>();
+        objects.add(object);
+
+        when(mainObject.getX()).thenReturn(5.0f);
+        when(mainObject.getVx()).thenReturn(-3.0f);
+        when(mainObject.collidesWith(object)).thenReturn(true);
+
+        controllerLevel.CheckPhysicalCollisionsX(mainObject, objects, camera);
+
+        verify(mainObject, times(1)).handleCollision(object, 'L');
     }
 }
