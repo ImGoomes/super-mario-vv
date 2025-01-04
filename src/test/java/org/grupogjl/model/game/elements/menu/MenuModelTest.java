@@ -16,10 +16,13 @@ import static org.mockito.Mockito.*;
 class MenuModelTest {
 
     private MenuModel menuModel;
+    private Game mockGame;
+
 
     @BeforeEach
     void setUp() {
         menuModel = new MenuModel();
+        mockGame = mock(Game.class);
     }
 
     @Test
@@ -80,7 +83,6 @@ class MenuModelTest {
 
     @Test
     void testMenuModel_ExecuteWithStartGameCommand() throws IOException {
-        Game mockGame = mock(Game.class);
         when(mockGame.getStateGame()).thenReturn(mock(StateGame.class));
 
         menuModel.execute(mockGame);
@@ -91,7 +93,6 @@ class MenuModelTest {
 
     @Test
     void testMenuModel_ExecuteThrowsRuntimeException() throws IOException {
-        Game mockGame = mock(Game.class);
         doThrow(new IOException("IO Error")).when(mockGame).setStateGame();
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> menuModel.execute(mockGame));
