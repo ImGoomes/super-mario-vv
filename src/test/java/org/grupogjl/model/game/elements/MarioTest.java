@@ -1,6 +1,8 @@
 package org.grupogjl.model.game.elements;
 
+import org.grupogjl.model.game.elements.blocks.BuildingBlock;
 import org.grupogjl.model.game.elements.blocks.GoalBlock;
+import org.grupogjl.model.game.elements.blocks.InteractableBlock;
 import org.grupogjl.model.game.elements.camera.Camera;
 import org.grupogjl.model.game.elements.enemies.Enemy;
 import org.grupogjl.model.game.elements.surprises.Surprise;
@@ -38,10 +40,43 @@ class MarioTest {
     }
 
     @Test
+    void testHit_Cooldown() {
+        mario.setHitCooldown(true);
+        boolean coolDown = mario.isHitCooldown();
+        assertEquals(true, coolDown, "Mario should be in hit cooldown");
+    }
+
+    @Test
     void testJump() {
+        mario.setJumping(false);
+        mario.setFalling(false);
         mario.jump();
         assertTrue(mario.isJumping(), "Mario should start jumping");
         assertEquals(1.3f, mario.getVy(), "Mario's vertical velocity should be set for jumping");
+    }
+
+    @Test
+    void testJump_Jumping() {
+        mario.setJumping(true);
+        mario.setFalling(false);
+        mario.jump();
+        assertFalse(mario.isFalling(), "Mario shouldn't start jumping because is jumping");
+    }
+
+    @Test
+    void testJump_Falling() {
+        mario.setJumping(false);
+        mario.setFalling(true);
+        mario.jump();
+        assertFalse(mario.isJumping(), "Mario shouldn't start jumping because is falling");
+    }
+
+    @Test
+    void testJump_FallingAndFalling() {
+        mario.setJumping(true);
+        mario.setFalling(true);
+        mario.jump();
+        assertTrue(mario.isJumping() && mario.isFalling(), "Mario shouldn't start jumping");
     }
 
     @Test
@@ -76,6 +111,22 @@ class MarioTest {
     }
 
     @Test
+    void testNotify_StateNonExists() throws IOException {
+        mario.notifyState("NonExists");
+        verify(mockObserver, never()).resetLevel();
+        verify(mockObserver, never()).nextLevel();
+    }
+
+    @Test
+    void testNotify_StateException() throws IOException {
+        doThrow(new IOException()).when(mockObserver).resetLevel();
+        assertThrows(RuntimeException.class, () -> mario.notifyState("lives"), "Expected RuntimeException to be thrown");
+
+        doThrow(new IOException()).when(mockObserver).nextLevel();
+        assertThrows(RuntimeException.class, () -> mario.notifyState("goal"), "Expected RuntimeException to be thrown");
+    }
+
+    @Test
     void testHandle_CollisionWithSurprise() {
         Surprise mockSurprise = mock(Surprise.class);
         mario.handleCollision(mockSurprise, 'U');
@@ -91,6 +142,61 @@ class MarioTest {
     }
 
     @Test
+    void testHandle_CollisionWithEnemyInvincibleNotInCooldown() {
+        Enemy mockEnemy = mock(Enemy.class);
+        mario.setStateInvencible(true);
+        mario.setHitCooldown(false);
+
+        mario.handleCollision(mockEnemy, 'L');
+
+        verify(mockEnemy, times(1)).setLives(0);
+        assertEquals(0.0f, mario.getVx(), "Mario's horizontal velocity should be set to 0");
+    }
+
+    @Test
+    void testHandle_CollisionWithEnemyInvincibleInCooldown() {
+        Enemy mockEnemy = mock(Enemy.class);
+        mario.setStateInvencible(true);
+        mario.setHitCooldown(true);
+
+        mario.handleCollision(mockEnemy, 'L');
+
+        assertEquals(0.0f, mario.getVx());
+    }
+
+    @Test
+    void testHandle_CollisionWithEnemyWhenBigOrFire() {
+        Enemy mockEnemy = mock(Enemy.class);
+        mario.setStateBig(true);
+        mario.setStateInvencible(false);
+
+        mario.handleCollision(mockEnemy, 'L');
+
+        assertFalse(mario.isStateBig(), "Mario should no longer be big");
+        assertFalse(mario.isStateFire(), "Mario should no longer be in fire state");
+        assertEquals(0.5f, mario.getHeight(), "Mario's height should be halved");
+        assertEquals(15, mario.getInvencibleTime(), "Mario's invincible time should be set to 15");
+        assertTrue(mario.isStateInvencible(), "Mario should be invincible");
+        assertTrue(mario.isHitCooldown(), "Mario should be in hit cooldown");
+    }
+
+    @Test
+    void testHandle_CollisionWithEnemyWhenStateFire() {
+        Enemy mockEnemy = mock(Enemy.class);
+        mario.setStateFire(true);
+        mario.setStateInvencible(false);
+
+        mario.handleCollision(mockEnemy, 'L');
+
+        assertFalse(mario.isStateBig(), "Mario should no longer be big");
+        assertFalse(mario.isStateFire(), "Mario should no longer be in fire state");
+        assertEquals(0.5f, mario.getHeight(), "Mario's height should be halved");
+        assertEquals(15, mario.getInvencibleTime(), "Mario's invincible time should be set to 15");
+        assertTrue(mario.isStateInvencible(), "Mario should be invincible");
+        assertTrue(mario.isHitCooldown(), "Mario should be in hit cooldown");
+    }
+
+    @Test
     void testHandle_CollisionWithEnemyJumping() {
         Enemy mockEnemy = mock(Enemy.class);
         when(mockEnemy.getLives()).thenReturn(1);
@@ -98,6 +204,61 @@ class MarioTest {
         mario.handleCollision(mockEnemy, 'D');
         assertTrue(mario.isJumping(), "Mario should jump after stomping an enemy");
         verify(mockEnemy, times(1)).setLives(0);
+    }
+
+    @Test
+    void testHandle_CollisionWithBuildingBlock_U() {
+        BuildingBlock mockBlock = mock(BuildingBlock.class);
+        when(mockBlock.getY()).thenReturn(10.0f);
+        when(mockBlock.getHeight()).thenReturn(1.0f);
+        mario.setHeight(1.0f);
+
+        InteractableBlock mockInteractableBlock = mock(InteractableBlock.class);
+        mario.handleCollision(mockInteractableBlock, 'U');
+
+        verify(mockInteractableBlock, times(1)).gotHit(mario);
+        assertEquals(0.0f, mario.getVy(), "Mario's vertical velocity should be set to 0");
+        assertFalse(mario.isJumping(), "Mario should not be jumping");
+        assertTrue(mario.isFalling(), "Mario should be falling");
+        assertEquals(1.0f, mario.getY(), "Mario's Y-coordinate should be set correctly");
+    }
+
+    @Test
+    void testHandle_CollisionWithBuildingBlock_D() {
+        BuildingBlock mockBlock = mock(BuildingBlock.class);
+        when(mockBlock.getY()).thenReturn(10.0f);
+        when(mockBlock.getHeight()).thenReturn(1.0f);
+
+        mario.handleCollision(mockBlock, 'D');
+
+        assertEquals(0.0f, mario.getVy(), "Mario's vertical velocity should be set to 0");
+        assertFalse(mario.isFalling(), "Mario should not be falling");
+        assertFalse(mario.isJumping(), "Mario should not be jumping");
+        assertEquals(9.0f, mario.getY(), "Mario's Y-coordinate should be set correctly");
+    }
+
+    @Test
+    void testHandle_CollisionWithBuildingBlock_L() {
+        BuildingBlock mockBlock = mock(BuildingBlock.class);
+        when(mockBlock.getX()).thenReturn(10.0f);
+        when(mockBlock.getWidth()).thenReturn(1.0f);
+
+        mario.handleCollision(mockBlock, 'L');
+
+        assertEquals(11.0f, mario.getX(), "Mario's X-coordinate should be set correctly");
+        assertEquals(0.0f, mario.getVx(), "Mario's horizontal velocity should be set to 0");
+    }
+
+    @Test
+    void testHandle_CollisionWithBuildingBlock_R() {
+        BuildingBlock mockBlock = mock(BuildingBlock.class);
+        when(mockBlock.getX()).thenReturn(10.0f);
+        when(mockBlock.getWidth()).thenReturn(1.0f);
+
+        mario.handleCollision(mockBlock, 'R');
+
+        assertEquals(9.0f, mario.getX(), "Mario's X-coordinate should be set correctly");
+        assertEquals(0.0f, mario.getVx(), "Mario's horizontal velocity should be set to 0");
     }
 
     @Test
