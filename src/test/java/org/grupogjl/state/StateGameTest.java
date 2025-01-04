@@ -93,7 +93,7 @@ class StateGameTest {
     }
 
     @Test
-    void testStepGameLogic() throws IOException {
+    void testStep_GameLogic() throws IOException {
         when(game.getStateGame()).thenReturn(stateGame);
 
         when(gui.getNextAction()).thenReturn(GeneralGui.ACTION.UP);
