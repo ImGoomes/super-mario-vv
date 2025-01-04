@@ -61,7 +61,7 @@ class LanternaGuiTest {
     }
 
     @Test
-    void testDrawPixelIsCalledForNonTransparentPixels() {
+    void testDraw_PixelIsCalledForNonTransparentPixels() {
         assertDoesNotThrow(() -> {
             DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory()
                     .setInitialTerminalSize(new TerminalSize(10, 10));
@@ -90,6 +90,35 @@ class LanternaGuiTest {
     }
 
     @Test
+    void testDraw_PixelIsCalledForNonEmptyDcolor() {
+        assertDoesNotThrow(() -> {
+            DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory()
+                    .setInitialTerminalSize(new TerminalSize(10, 10));
+            Screen screen = new TerminalScreen(terminalFactory.createTerminal());
+            screen.startScreen();
+
+            LanternaGui lanternaGui = new LanternaGui(screen);
+
+            SpriteBuilder spriteBuilder = new SpriteBuilder() {
+                @Override
+                public BufferedImage loadImage(String filename) {
+                    BufferedImage testImage = new BufferedImage(2, 2, BufferedImage.TYPE_INT_ARGB);
+                    testImage.setRGB(0, 0, new Color(255, 0, 0, 255).getRGB());
+                    testImage.setRGB(1, 0, new Color(0, 255, 0, 255).getRGB());
+                    testImage.setRGB(0, 1, new Color(0, 0, 255, 0).getRGB());
+                    testImage.setRGB(1, 1, new Color(255, 255, 255, 255).getRGB());
+                    return testImage;
+                }
+            };
+            lanternaGui.setSpriteBuilder(spriteBuilder);
+
+            lanternaGui.drawMenuImage(0, 0, "testImage.png", "#123456");
+
+            screen.stopScreen();
+        });
+    }
+
+    @Test
     void testGet_NextActionQuit() throws IOException {
         KeyStroke keyStroke = new KeyStroke('q', false, false);
         when(mockScreen.pollInput()).thenReturn(keyStroke);
@@ -109,6 +138,42 @@ class LanternaGuiTest {
         verify(mockTextGraphics).setForegroundColor(TextColor.Factory.fromString("#FF0000"));
         verify(mockTextGraphics).setBackgroundColor(TextColor.Factory.fromString("#FF0000"));
         verify(mockTextGraphics).putString(10, 20, " ");
+    }
+
+    @Test
+    void testDraw_ImageForNonTransparentPixels() {
+        assertDoesNotThrow(() -> {
+            DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory();
+            Screen screen = new TerminalScreen(terminalFactory.createTerminal());
+            screen.startScreen();
+
+            LanternaGui lanternaGui = new LanternaGui(screen);
+
+            SpriteBuilder spriteBuilder = new SpriteBuilder() {
+                @Override
+                public BufferedImage loadImage(String filename) {
+                    BufferedImage testImage = new BufferedImage(2, 2, BufferedImage.TYPE_INT_ARGB);
+                    testImage.setRGB(0, 0, new Color(255, 0, 0, 255).getRGB());
+                    testImage.setRGB(1, 0, new Color(0, 255, 0, 255).getRGB());
+                    testImage.setRGB(0, 1, new Color(0, 0, 255, 0).getRGB());
+                    testImage.setRGB(1, 1, new Color(255, 255, 255, 255).getRGB());
+                    return testImage;
+                }
+            };
+            lanternaGui.setSpriteBuilder(spriteBuilder);
+
+            LanternaGui spyGui = new LanternaGui(screen) {
+                @Override
+                public void drawPixel(int x, int y, String color) {
+                    System.out.printf("drawPixel called with x=%d, y=%d, color=%s%n", x, y, color);
+                }
+            };
+            spyGui.setSpriteBuilder(spriteBuilder);
+
+            spyGui.drawImage(0, 0, "testImage.png");
+
+            screen.stopScreen();
+        });
     }
 
     @Test
