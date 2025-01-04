@@ -1,5 +1,6 @@
 package org.grupogjl.state;
 
+import org.grupogjl.viewer.ViewerGame;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -108,6 +109,17 @@ class StateGameTest {
     void testDraw_WithValidGui(){
         GeneralGui mockGeneralGui = mock(GeneralGui.class);
         stateGame.draw(mockGeneralGui);
+    }
+
+    @Test
+    void testDraw_RuntimeException() throws IOException {
+        GeneralGui mockGeneralGui = mock(GeneralGui.class);
+        ViewerGame mockViewerGame = mock(ViewerGame.class);
+        stateGame.setViewer(mockViewerGame);
+
+        doThrow(IOException.class).when(mockViewerGame).draw(any(StateGame.class), any(GeneralGui.class));
+
+        assertThrows(RuntimeException.class, () -> stateGame.draw(mockGeneralGui));
     }
 
     @Test
