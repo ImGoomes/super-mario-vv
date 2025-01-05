@@ -58,34 +58,4 @@ class GameTest {
         game.setStateNull();
         assertNull(game.getState(), "State should be null");
     }
-
-//    @Test
-//    void testRun() throws InterruptedException, IOException {
-//        // Mock dependencies
-//        LanternaGui mockGui = mock(LanternaGui.class);
-//        State mockState = mock(State.class);
-//
-//        // Create the Game instance with the mocked GUI
-//        Game game = new Game(mockGui);
-//
-//        game.setStateGame(mockState);
-//
-//        Thread testThread = new Thread(() -> {
-//            try {
-//                game.run();
-//            } catch (Exception e) {
-//                throw new RuntimeException(e);
-//            }
-//        });
-//
-//        testThread.start();
-//
-//        Thread.sleep(500);
-//
-//        game.setStateNull();
-//
-//        testThread.join();
-//
-//        verify(mockState, atLeastOnce()).step(eq(game), eq(mockGui), anyLong());
-//    }
 }
