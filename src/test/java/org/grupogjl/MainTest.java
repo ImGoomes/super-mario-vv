@@ -1,38 +1,28 @@
 package org.grupogjl;
 
-import org.grupogjl.Game;
-import org.grupogjl.Main;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.awt.*;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class MainTest {
 
-    private Game mockGame;
-
-    @BeforeEach
-    void setUp() {
-        mockGame = mock(Game.class);
-    }
-
     @Test
-    void testMainExecution() throws IOException, URISyntaxException, FontFormatException, InterruptedException {
-        Mockito.mockStatic(Game.class);
-        when(Game.getInstance()).thenReturn(mockGame);
+    void testMain() throws IOException, URISyntaxException, FontFormatException, InterruptedException {
+        Game mockGame = mock(Game.class);
 
-        Main.main(new String[]{});
+        try (MockedStatic<Game> mockedGame = mockStatic(Game.class)) {
+            mockedGame.when(Game::getInstance).thenReturn(mockGame);
 
-        verify(Game.class);
-        Game.getInstance();
+            Main.main(new String[]{});
 
-        verify(mockGame, times(1)).run();
+            mockedGame.verify(Game::getInstance, times(1));
+
+            verify(mockGame, times(1)).run();
+        }
     }
 }
