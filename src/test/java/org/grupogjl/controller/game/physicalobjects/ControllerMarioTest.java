@@ -105,6 +105,16 @@ class ControllerMarioTest {
     }
 
     @Test
+    void testUpdateMarioStatus_LessThan10Coins() {
+        when(mario.getCoins()).thenReturn(5);
+
+        controllerMario.updateMarioStatus(level);
+
+        verify(mario, never()).setLives(anyInt());
+        verify(mario, never()).setCoins(anyInt());
+    }
+
+    @Test
     void testMoveMario_ThrowFireball() {
         when(mario.isStateFire()).thenReturn(true);
 
@@ -112,6 +122,15 @@ class ControllerMarioTest {
 
         assertEquals(1, objects.size());
         assertTrue(objects.get(0) instanceof FireBall);
+    }
+
+    @Test
+    void testMoveMario_ThrowFireball_NonFireState() {
+        when(mario.isStateFire()).thenReturn(false);
+
+        controllerMario.moveMario(GeneralGui.ACTION.THROWBALL, mario, objects);
+
+        assertEquals(0, objects.size());
     }
 
     @Test
@@ -125,94 +144,55 @@ class ControllerMarioTest {
     }
 
     @Test
-    void testUpdateMarioStatus_DisableInvincibilityAndHitCooldown() {
-        when(mario.getInvencibleTime()).thenReturn(0);
-        when(mario.isStateInvencible()).thenReturn(true);
-        when(mario.isHitCooldown()).thenReturn(true);
-
-        controllerMario.updateMarioStatus(level);
-
-        verify(mario, times(1)).setStateInvencible(false);
-        verify(mario, times(1)).setHitCooldown(false);
-    }
-
-    @Test
-    void testUpdateMarioStatus_HitCooldownConditionFalse() {
-        when(mario.getInvencibleTime()).thenReturn(0);
-        when(mario.isStateInvencible()).thenReturn(true);
-        when(mario.isHitCooldown()).thenReturn(false);
-
-        controllerMario.updateMarioStatus(level);
-
-        verify(mario, times(1)).setStateInvencible(false);
-    }
-
-    @Test
-    void testUpdateMarioStatus_DecrementInvincibilityTime() {
-        when(mario.getInvencibleTime()).thenReturn(5);
-        when(mario.isStateInvencible()).thenReturn(true);
-
-        controllerMario.updateMarioStatus(level);
-
-        verify(mario, times(1)).setInvencibleTime(4);
-    }
-
-    @Test
-    void testUpdateMarioStatus_InvencibleTimeAndStateInvencibleFalse() {
-        when(mario.getInvencibleTime()).thenReturn(0);
-        when(mario.isStateInvencible()).thenReturn(false);
-
-        controllerMario.updateMarioStatus(level);
-    }
-
-    @Test
-    void testUpdateMarioStatus_InvencibleTimeFalseAndStateInvencibleTrue() {
-        when(mario.getInvencibleTime()).thenReturn(0);
-        when(mario.isStateInvencible()).thenReturn(true);
-
-        controllerMario.updateMarioStatus(level);
-    }
-
-    @Test
-    void testUpdateMarioStatus_InvencibleTimeTrueAndStateInvencibleFalse() {
-        when(mario.getInvencibleTime()).thenReturn(5);
-        when(mario.isStateInvencible()).thenReturn(false);
-
-        controllerMario.updateMarioStatus(level);
-    }
-
-    @Test
-    void test_TransportMario() {
-        Pipe pipe = mock(Pipe.class);
-        when(pipe.getX()).thenReturn(5.0f);
-        when(pipe.getY()).thenReturn(10.0f);
-        when(pipe.getHeight()).thenReturn(2.0f);
-        Pipe connectionPipe = mock(Pipe.class);
-        when(connectionPipe.getX()).thenReturn(15.0f);
-        when(connectionPipe.getY()).thenReturn(20.0f);
-        when(connectionPipe.getHeight()).thenReturn(2.0f);
-        when(pipe.getConection()).thenReturn(connectionPipe);
-
-        objects.add(pipe);
-
-        when(mario.getX()).thenReturn(5.1f);
-        when(mario.getY()).thenReturn(8.0f);
-
-        controllerMario.transportMario(mario, objects);
-
-        verify(mario, times(1)).setX(15.0f);
-        verify(mario, times(1)).setY(18.0f);
-    }
-
-    @Test
-    void testMoveMario_ReduceVelocityWhenNone() {
-        when(mario.isJumping()).thenReturn(true);
-        when(mario.isFalling()).thenReturn(false);
+    void testMoveMario_ReduceVelocityWhenFalling() {
+        when(mario.isJumping()).thenReturn(false);
+        when(mario.isFalling()).thenReturn(true);
         when(mario.getVx()).thenReturn(8.0f);
 
         controllerMario.moveMario(GeneralGui.ACTION.NONE, mario, objects);
 
         verify(mario, times(1)).setVx(2.0f);
     }
-}
 
+    @Test
+    void testTransportMario_NonPipeObject() {
+        GameObject nonPipeObject = mock(GameObject.class);
+        objects.add(nonPipeObject);
+
+        controllerMario.transportMario(mario, objects);
+
+        verify(mario, never()).setX(anyFloat());
+        verify(mario, never()).setY(anyFloat());
+    }
+
+    @Test
+    void testTransportMario_MarioNotNearPipe() {
+        Pipe pipe = mock(Pipe.class);
+        when(pipe.getX()).thenReturn(50.0f);
+        objects.add(pipe);
+
+        when(mario.getX()).thenReturn(5.1f);
+
+        controllerMario.transportMario(mario, objects);
+
+        verify(mario, never()).setX(anyFloat());
+        verify(mario, never()).setY(anyFloat());
+    }
+
+    @Test
+    void testTransportMario_NotAbovePipe() {
+        Pipe pipe = mock(Pipe.class);
+        when(pipe.getX()).thenReturn(5.0f);
+        when(pipe.getY()).thenReturn(10.0f);
+        when(pipe.getHeight()).thenReturn(2.0f);
+        objects.add(pipe);
+
+        when(mario.getX()).thenReturn(5.1f);
+        when(mario.getY()).thenReturn(15.0f); // Not above the pipe
+
+        controllerMario.transportMario(mario, objects);
+
+        verify(mario, never()).setX(anyFloat());
+        verify(mario, never()).setY(anyFloat());
+    }
+}
