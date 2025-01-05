@@ -268,4 +268,113 @@ class ControllerLevelTest {
 
         verify(mainObject, times(1)).handleCollision(object, 'L');
     }
+
+    @Test
+    void testEnemyCollision_LeftSide_Above() {
+        PhysicalObject mainObject = mock(PhysicalObject.class);
+        PhysicalObject enemy = mock(PhysicalObject.class);
+        Camera camera = mock(Camera.class);
+        List<GameObject> objects = new ArrayList<>();
+        objects.add(enemy);
+
+        when(mainObject.getX()).thenReturn(5.0f);
+        when(mainObject.getY()).thenReturn(6.0f);
+        when(enemy.getX()).thenReturn(6.0f);
+        when(enemy.getY()).thenReturn(5.0f);
+        when(mainObject.collidesWithPhysical(enemy, Math.abs(enemy.getVx()), -0.2f)).thenReturn(true);
+
+        controllerLevel.CheckPhysicalCollisionsX(mainObject, objects, camera);
+
+        verify(mainObject, times(1)).handleCollision(enemy, 'L');
+    }
+
+    @Test
+    void testEnemyCollision_LeftSide_Below() {
+        PhysicalObject mainObject = mock(PhysicalObject.class);
+        PhysicalObject enemy = mock(PhysicalObject.class);
+        Camera camera = mock(Camera.class);
+        List<GameObject> objects = new ArrayList<>();
+        objects.add(enemy);
+
+        when(mainObject.getX()).thenReturn(5.0f);
+        when(mainObject.getY()).thenReturn(4.0f);
+        when(enemy.getX()).thenReturn(6.0f);
+        when(enemy.getY()).thenReturn(5.0f);
+        when(mainObject.collidesWithPhysical(enemy, Math.abs(enemy.getVx()), -0.2f)).thenReturn(true);
+
+        controllerLevel.CheckPhysicalCollisionsX(mainObject, objects, camera);
+
+        verify(mainObject, never()).handleCollision(enemy, 'L');
+    }
+
+    @Test
+    void testEnemyCollision_RightSide_Above() {
+        PhysicalObject mainObject = mock(PhysicalObject.class);
+        PhysicalObject enemy = mock(PhysicalObject.class);
+        Camera camera = mock(Camera.class);
+        List<GameObject> objects = new ArrayList<>();
+        objects.add(enemy);
+
+        when(mainObject.getX()).thenReturn(6.0f);
+        when(mainObject.getY()).thenReturn(6.0f);
+        when(enemy.getX()).thenReturn(5.0f);
+        when(enemy.getY()).thenReturn(5.0f);
+        when(mainObject.collidesWithPhysical(enemy, Math.abs(enemy.getVx()), -0.2f)).thenReturn(true);
+
+        controllerLevel.CheckPhysicalCollisionsX(mainObject, objects, camera);
+
+        verify(mainObject, times(1)).handleCollision(enemy, 'R');
+    }
+
+    @Test
+    void testEnemyCollision_RightSide_Below() {
+        PhysicalObject mainObject = mock(PhysicalObject.class);
+        PhysicalObject enemy = mock(PhysicalObject.class);
+        Camera camera = mock(Camera.class);
+        List<GameObject> objects = new ArrayList<>();
+        objects.add(enemy);
+
+        when(mainObject.getX()).thenReturn(6.0f);
+        when(mainObject.getY()).thenReturn(4.0f);
+        when(enemy.getX()).thenReturn(5.0f);
+        when(enemy.getY()).thenReturn(5.0f);
+        when(mainObject.collidesWithPhysical(enemy, Math.abs(enemy.getVx()), -0.2f)).thenReturn(true);
+
+        controllerLevel.CheckPhysicalCollisionsX(mainObject, objects, camera);
+
+        verify(mainObject, never()).handleCollision(enemy, 'R');
+    }
+
+    @Test
+    void testObjectNotEqualMainObject_True() {
+        PhysicalObject mainObject = mock(PhysicalObject.class);
+        GameObject object = mock(GameObject.class);
+        Camera camera = mock(Camera.class);
+        List<GameObject> objects = new ArrayList<>();
+        objects.add(object);
+
+        when(mainObject.getX()).thenReturn(5.0f);
+        when(mainObject.getVx()).thenReturn(1.0f);
+        when(mainObject.collidesWith(object)).thenReturn(true);
+
+        controllerLevel.CheckPhysicalCollisionsX(mainObject, objects, camera);
+
+        verify(mainObject, times(1)).handleCollision(object, 'R');
+    }
+
+    @Test
+    void testObjectNotEqualMainObject_False() {
+        PhysicalObject mainObject = mock(PhysicalObject.class);
+        GameObject object = mainObject;
+        Camera camera = mock(Camera.class);
+        List<GameObject> objects = new ArrayList<>();
+        objects.add(object);
+
+        when(mainObject.getX()).thenReturn(5.0f);
+        when(mainObject.getVx()).thenReturn(1.0f);
+
+        controllerLevel.CheckPhysicalCollisionsX(mainObject, objects, camera);
+
+        verify(mainObject, never()).handleCollision(any(), anyChar());
+    }
 }

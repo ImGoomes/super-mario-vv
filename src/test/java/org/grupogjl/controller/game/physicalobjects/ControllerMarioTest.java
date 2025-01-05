@@ -188,7 +188,7 @@ class ControllerMarioTest {
         objects.add(pipe);
 
         when(mario.getX()).thenReturn(5.1f);
-        when(mario.getY()).thenReturn(15.0f); // Not above the pipe
+        when(mario.getY()).thenReturn(15.0f);
 
         controllerMario.transportMario(mario, objects);
 
