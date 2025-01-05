@@ -91,6 +91,14 @@ class FlowerTest {
     }
 
     @Test
+    void testHandle_CollisionWithOutOfRange() {
+        StaticObject staticObject = mock(StaticObject.class);
+        when(staticObject.getX()).thenReturn(20f);
+
+        flower.handleCollision(staticObject, 'A');
+    }
+
+    @Test
     void testGet_VirtualCoordinates() {
         Camera mockCamera = mock(Camera.class);
         when(mockCamera.getLeftCamLimit()).thenReturn(5f);
@@ -102,5 +110,30 @@ class FlowerTest {
     @Test
     void testGet_Image() {
         assertEquals("flower.png", flower.getImage(), "Flower's image should be 'flower.png'.");
+    }
+
+    @Test
+    void testHandle_CollisionWithNonStaticObject() {
+        GameObject nonStaticObject = mock(GameObject.class);
+        float initialX = flower.getX();
+        float initialY = flower.getY();
+        float initialVx = flower.getVx();
+        float initialVy = flower.getVy();
+
+        flower.handleCollision(nonStaticObject, 'R');
+
+        assertEquals(initialX, flower.getX(), "X position should not change when colliding with non-static object");
+        assertEquals(initialY, flower.getY(), "Y position should not change when colliding with non-static object");
+        assertEquals(initialVx, flower.getVx(), "Horizontal velocity should not change when colliding with non-static object");
+        assertEquals(initialVy, flower.getVy(), "Vertical velocity should not change when colliding with non-static object");
+    }
+
+    @Test
+    void testHandleCollision_AllCases() {
+        testHandle_CollisionWithStaticObjectUp();
+        testHandle_CollisionWithStaticObjectDown();
+        testHandle_CollisionWithStaticObjectLeft();
+        testHandle_CollisionWithStaticObjectRight();
+        testHandle_CollisionWithOutOfRange();
     }
 }
