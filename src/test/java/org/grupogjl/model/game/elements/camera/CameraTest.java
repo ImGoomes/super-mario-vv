@@ -77,4 +77,37 @@ class CameraTest {
 
         verify(enemy, never()).setRevealed(true);
     }
+
+    @Test
+    void testIsEnemyOnCam_EnemyNotOnCamera_LeftOfBounds() {
+        when(enemy.getX()).thenReturn(-5.0f);
+        when(enemy.getWidth()).thenReturn(5.0f);
+        when(enemy.wasRevealed()).thenReturn(false);
+
+        camera.isEnemyOnCam(enemy);
+
+        verify(enemy, never()).setRevealed(true);
+    }
+
+    @Test
+    void testIsEnemyOnCam_EnemyNotOnCamera_RightOfBounds() {
+        when(enemy.getX()).thenReturn(30.0f);
+        when(enemy.getWidth()).thenReturn(5.0f);
+        when(enemy.wasRevealed()).thenReturn(false);
+
+        camera.isEnemyOnCam(enemy);
+
+        verify(enemy, never()).setRevealed(true);
+    }
+
+    @Test
+    void testIsEnemyOnCam_EnemyPartiallyOnCamera() {
+        when(enemy.getX()).thenReturn(25.0f);
+        when(enemy.getWidth()).thenReturn(10.0f);
+        when(enemy.wasRevealed()).thenReturn(false);
+
+        camera.isEnemyOnCam(enemy);
+
+        verify(enemy, never()).setRevealed(true);
+    }
 }
