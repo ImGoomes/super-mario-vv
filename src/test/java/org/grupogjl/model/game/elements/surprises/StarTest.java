@@ -92,6 +92,30 @@ class StarTest {
     }
 
     @Test
+    void testHandle_CollisionOutOfRange() {
+        StaticObject staticObject = mock(StaticObject.class);
+        when(staticObject.getX()).thenReturn(20f);
+
+        star.handleCollision(staticObject, 'A');
+    }
+
+    @Test
+    void testHandle_CollisionWithNonStaticObject() {
+        GameObject nonStaticObject = mock(GameObject.class);
+        float initialX = star.getX();
+        float initialY = star.getY();
+        float initialVx = star.getVx();
+        float initialVy = star.getVy();
+
+        star.handleCollision(nonStaticObject, 'R');
+
+        assertEquals(initialX, star.getX(), "X position should not change when colliding with non-static object");
+        assertEquals(initialY, star.getY(), "Y position should not change when colliding with non-static object");
+        assertEquals(initialVx, star.getVx(), "Horizontal velocity should not change when colliding with non-static object");
+        assertEquals(initialVy, star.getVy(), "Vertical velocity should not change when colliding with non-static object");
+    }
+
+    @Test
     void testGet_VirtualCoordinates() {
         Camera mockCamera = mock(Camera.class);
         when(mockCamera.getLeftCamLimit()).thenReturn(5f);
