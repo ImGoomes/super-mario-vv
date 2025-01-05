@@ -115,4 +115,69 @@ class FireBallTest {
     void testGet_Image() {
         assertEquals("fireBall.png", fireBall.getImage(), "FireBall's image should be 'fireBall.png'.");
     }
+
+    @Test
+    void testHandleCollision_UpperCollisionWithStaticObject() {
+        StaticObject staticObject = mock(StaticObject.class);
+        when(staticObject.getY()).thenReturn(15f);
+
+        fireBall.handleCollision(staticObject, 'U');
+
+        assertEquals(16, fireBall.getY(), "FireBall's y position should adjust to the static object's top.");
+        assertEquals(0, fireBall.getVy(), "FireBall's vertical velocity should be set to 0.");
+    }
+
+    @Test
+    void testHandleCollision_DownwardCollisionWithStaticObject() {
+        StaticObject staticObject = mock(StaticObject.class);
+        when(staticObject.getY()).thenReturn(30f);
+        when(staticObject.getHeight()).thenReturn(5f);
+
+        fireBall.handleCollision(staticObject, 'D');
+
+        assertEquals(25, fireBall.getY(), "FireBall's y position should adjust to the static object's bottom.");
+        assertFalse(fireBall.isFalling(), "FireBall should not be falling.");
+        assertEquals(-0.1f, fireBall.getVy(), "FireBall's vertical velocity should be set to -0.1.");
+        assertTrue(fireBall.isJumping(), "FireBall should enter a jumping state.");
+    }
+
+    @Test
+    void testHandleCollision_LeftwardCollisionWithStaticObject() {
+        StaticObject staticObject = mock(StaticObject.class);
+        when(staticObject.getX()).thenReturn(5f);
+        when(staticObject.getWidth()).thenReturn(2f);
+
+        fireBall.handleCollision(staticObject, 'L');
+
+        assertEquals(7, fireBall.getX(), "FireBall's x position should adjust to the static object's right edge.");
+        assertFalse(fireBall.isActive(), "FireBall should be deactivated after a leftward collision.");
+    }
+
+    @Test
+    void testHandleCollision_RightwardCollisionWithStaticObject() {
+        StaticObject staticObject = mock(StaticObject.class);
+        when(staticObject.getX()).thenReturn(20f);
+
+        fireBall.handleCollision(staticObject, 'R');
+
+        assertEquals(19, fireBall.getX(), "FireBall's x position should adjust to the static object's left edge.");
+        assertFalse(fireBall.isActive(), "FireBall should be deactivated after a rightward collision.");
+    }
+
+    @Test
+    void testHandleCollision_NonExistent() {
+        StaticObject staticObject = mock(StaticObject.class);
+        when(staticObject.getX()).thenReturn(20f);
+
+        fireBall.handleCollision(staticObject, 'A');
+    }
+
+    @Test
+    void testHandleCollision_AllCases() {
+        testHandleCollision_UpperCollisionWithStaticObject();
+        testHandleCollision_DownwardCollisionWithStaticObject();
+        testHandleCollision_LeftwardCollisionWithStaticObject();
+        testHandleCollision_RightwardCollisionWithStaticObject();
+        testHandleCollision_NonExistent();
+    }
 }
