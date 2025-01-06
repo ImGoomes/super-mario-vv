@@ -239,4 +239,31 @@ class PhysicalObjectTest {
         assertTrue(physicalObject.collidesWithPhysical(mockPhysicalObject, 2f, 2f),
                 "Should detect collision with offset just outside the boundary");
     }
+
+    @Test
+    void testCollidesWithPhysical_XOverlapOnly() {
+        when(mockPhysicalObject.getX()).thenReturn(110f);
+        when(mockPhysicalObject.getY()).thenReturn(300f);
+
+        assertFalse(physicalObject.collidesWithPhysical(mockPhysicalObject, 0f, 0f),
+                "Should not detect collision when only x-axis overlaps");
+    }
+
+    @Test
+    void testCollidesWithPhysical_VerticalOverlapOnly() {
+        when(mockPhysicalObject.getX()).thenReturn(300f);
+        when(mockPhysicalObject.getY()).thenReturn(110f);
+
+        assertFalse(physicalObject.collidesWithPhysical(mockPhysicalObject, 0f, 0f),
+                "Should not detect collision when only vertical axis overlaps");
+    }
+
+    @Test
+    void testCollidesWithPhysical_NoOverlap() {
+        when(mockPhysicalObject.getX()).thenReturn(300f);
+        when(mockPhysicalObject.getY()).thenReturn(300f);
+
+        assertFalse(physicalObject.collidesWithPhysical(mockPhysicalObject, 0f, 0f),
+                "Should not detect collision when there is no overlap");
+    }
 }
