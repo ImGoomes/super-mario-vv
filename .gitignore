@@ -23,3 +23,9 @@ out
 *.ipr
 *.iws
 .ijwb/
+
+# TestSmells
+*.csv
+*.py
+TestSmellDetector-0.1-jar-with-dependencies.jar
+
