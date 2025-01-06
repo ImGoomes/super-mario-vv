@@ -195,4 +195,47 @@ class ControllerMarioTest {
         verify(mario, never()).setX(anyFloat());
         verify(mario, never()).setY(anyFloat());
     }
+
+    @Test
+    void testUpdateMarioStatus_InvincibleTimeZeroAndStateInvincible() {
+        when(mario.getInvencibleTime()).thenReturn(0);
+        when(mario.isStateInvencible()).thenReturn(true);
+        when(mario.isHitCooldown()).thenReturn(true);
+
+        controllerMario.updateMarioStatus(level);
+
+        verify(mario, times(1)).setStateInvencible(false);
+        verify(mario, times(1)).setHitCooldown(false);
+    }
+
+    @Test
+    void testUpdateMarioStatus_InvincibleTimeZeroAndStateNotInvincible() {
+        when(mario.getInvencibleTime()).thenReturn(0);
+        when(mario.isStateInvencible()).thenReturn(false);
+
+        controllerMario.updateMarioStatus(level);
+
+        verify(mario, never()).setStateInvencible(false);
+        verify(mario, never()).setHitCooldown(false);
+    }
+
+    @Test
+    void testUpdateMarioStatus_InvincibleTimeNonZeroAndStateInvincible() {
+        when(mario.getInvencibleTime()).thenReturn(5);
+        when(mario.isStateInvencible()).thenReturn(true);
+
+        controllerMario.updateMarioStatus(level);
+
+        verify(mario, times(1)).setInvencibleTime(4);
+    }
+
+    @Test
+    void testUpdateMarioStatus_InvincibleTimeNonZeroAndStateNotInvincible() {
+        when(mario.getInvencibleTime()).thenReturn(5);
+        when(mario.isStateInvencible()).thenReturn(false);
+
+        controllerMario.updateMarioStatus(level);
+
+        verify(mario, never()).setInvencibleTime(anyInt());
+    }
 }

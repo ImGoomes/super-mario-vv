@@ -360,4 +360,10 @@ class MarioTest {
 
         assertTrue(conditionMet, "Condition for marioStarBig.png was satisfied");
     }
+
+    @Test
+    void testGet_Coins() {
+        mario.setCoins(5);
+        assertEquals(5, mario.getCoins(), "Mario should return the correct number of coins");
+    }
 }
