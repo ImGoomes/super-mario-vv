@@ -1,5 +1,10 @@
 package org.grupogjl.controller.game;
 
+import org.grupogjl.controller.game.blocks.ControllerBlocks;
+import org.grupogjl.controller.game.physicalobjects.ControllerEnemy;
+import org.grupogjl.controller.game.physicalobjects.ControllerFireBall;
+import org.grupogjl.controller.game.physicalobjects.ControllerMario;
+import org.grupogjl.controller.game.surprises.ControllerSurprises;
 import org.grupogjl.gui.GeneralGui;
 import org.grupogjl.model.game.elements.Mario;
 import org.grupogjl.model.game.elements.camera.Camera;
@@ -51,7 +56,6 @@ class ControllerLevelTest {
 
     @Test
     void testCheck_CollisionsMarioWithObjects() {
-        // Arrange: Create a mock PhysicalObject to avoid casting issues
         PhysicalObject mockPhysicalObject = mock(PhysicalObject.class);
         when(mockPhysicalObject.getX()).thenReturn(10.0f);
         when(mockPhysicalObject.getY()).thenReturn(5.0f);
@@ -376,5 +380,126 @@ class ControllerLevelTest {
         controllerLevel.CheckPhysicalCollisionsX(mainObject, objects, camera);
 
         verify(mainObject, never()).handleCollision(any(), anyChar());
+    }
+
+    @Test
+    void testStep_CallsControllerFireBallStep() {
+        GeneralGui.ACTION mockAction = GeneralGui.ACTION.RIGHT;
+        long mockTime = 100L;
+
+        ControllerFireBall mockControllerFireBall = mock(ControllerFireBall.class);
+        controllerLevel = spy(new ControllerLevel());
+        doReturn(mockControllerFireBall).when(controllerLevel).getControllerFireBall();
+
+        controllerLevel.step(mockLevel, mockAction, mockTime);
+
+        verify(mockControllerFireBall, times(1)).step(mockLevel, mockAction, mockTime);
+    }
+
+    @Test
+    void testStep_CallsControllerMarioStep() {
+        GeneralGui.ACTION mockAction = GeneralGui.ACTION.RIGHT;
+        long mockTime = 100L;
+
+        ControllerMario mockControllerMario = mock(ControllerMario.class);
+        controllerLevel = spy(new ControllerLevel());
+        doReturn(mockControllerMario).when(controllerLevel).getControllerMario();
+
+        controllerLevel.step(mockLevel, mockAction, mockTime);
+
+        verify(mockControllerMario, times(1)).step(mockLevel, mockAction, mockTime);
+    }
+
+    @Test
+    void testStep_CallsControllerEnemyStep() {
+        long mockTime = 100L;
+
+        ControllerEnemy mockControllerEnemy = mock(ControllerEnemy.class);
+        controllerLevel = spy(new ControllerLevel());
+        doReturn(mockControllerEnemy).when(controllerLevel).getControllerEnemy();
+
+        controllerLevel.step(mockLevel, GeneralGui.ACTION.RIGHT, mockTime);
+
+        verify(mockControllerEnemy, times(1)).step(mockLevel, mockTime);
+    }
+
+    @Test
+    void testStep_CallsControllerSurprisesStep() {
+        GeneralGui.ACTION mockAction = GeneralGui.ACTION.RIGHT;
+        long mockTime = 100L;
+
+        ControllerSurprises mockControllerSurprises = mock(ControllerSurprises.class);
+        controllerLevel = spy(new ControllerLevel());
+        doReturn(mockControllerSurprises).when(controllerLevel).getControllerSurprises();
+
+        controllerLevel.step(mockLevel, mockAction, mockTime);
+
+        verify(mockControllerSurprises, times(1)).step(mockLevel, mockAction, mockTime);
+    }
+
+    @Test
+    void testStep_CallsControllerBlocksStep() {
+        GeneralGui.ACTION mockAction = GeneralGui.ACTION.RIGHT;
+        long mockTime = 100L;
+
+        ControllerBlocks mockControllerBlocks = mock(ControllerBlocks.class);
+        controllerLevel = spy(new ControllerLevel());
+        doReturn(mockControllerBlocks).when(controllerLevel).getControllerBlocks();
+
+        controllerLevel.step(mockLevel, mockAction, mockTime);
+
+        verify(mockControllerBlocks, times(1)).step(mockLevel, mockAction, mockTime);
+    }
+
+    @Test
+    void testStep_CallsCheckCollisions() {
+        GeneralGui.ACTION mockAction = GeneralGui.ACTION.RIGHT;
+        long mockTime = 100L;
+
+        controllerLevel = spy(new ControllerLevel());
+
+        controllerLevel.step(mockLevel, mockAction, mockTime);
+
+        verify(controllerLevel, times(1)).checkCollisions(mockMario, mockObjects, mockCamera);
+    }
+
+    @Test
+    void testCheckCollisions_CallsCheckPhysicalCollisionsXForMario() {
+        controllerLevel = spy(new ControllerLevel());
+
+        controllerLevel.checkCollisions(mockMario, mockObjects, mockCamera);
+
+        verify(controllerLevel, times(1)).CheckPhysicalCollisionsX(mockMario, mockObjects, mockCamera);
+    }
+
+    @Test
+    void testCheckCollisions_CallsCheckPhysicalCollisionsYForMario() {
+        controllerLevel = spy(new ControllerLevel());
+
+        controllerLevel.checkCollisions(mockMario, mockObjects, mockCamera);
+
+        verify(controllerLevel, times(1)).CheckPhysicalCollisionsY(mockMario, mockObjects);
+    }
+
+    @Test
+    void testCheckCollisions_CallsCheckPhysicalCollisionsXForPhysicalObjects() {
+        PhysicalObject mockPhysicalObject = mock(PhysicalObject.class);
+        mockObjects.add(mockPhysicalObject);
+        controllerLevel = spy(new ControllerLevel());
+
+        controllerLevel.checkCollisions(mockMario, mockObjects, mockCamera);
+
+        verify(controllerLevel, times(1)).CheckPhysicalCollisionsX(mockPhysicalObject, mockObjects, mockCamera);
+    }
+
+    @Test
+    void testCheckCollisions_CallsCheckPhysicalCollisionsYForPhysicalObjects() {
+        PhysicalObject mockPhysicalObject = mock(PhysicalObject.class);
+        mockObjects.add(mockPhysicalObject);
+        controllerLevel = spy(new ControllerLevel());
+
+        controllerLevel.checkCollisions(mockMario, mockObjects, mockCamera);
+
+        verify(controllerLevel, times(1)).CheckPhysicalCollisionsY(mockPhysicalObject, mockObjects);
     }
 }
