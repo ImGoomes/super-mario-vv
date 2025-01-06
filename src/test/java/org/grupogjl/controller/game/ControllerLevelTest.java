@@ -7,6 +7,7 @@ import org.grupogjl.controller.game.physicalobjects.ControllerMario;
 import org.grupogjl.controller.game.surprises.ControllerSurprises;
 import org.grupogjl.gui.GeneralGui;
 import org.grupogjl.model.game.elements.Mario;
+import org.grupogjl.model.game.elements.blocks.BuildingBlock;
 import org.grupogjl.model.game.elements.camera.Camera;
 import org.grupogjl.model.game.elements.generalobjects.GameObject;
 import org.grupogjl.model.game.elements.generalobjects.PhysicalObject;
@@ -501,5 +502,66 @@ class ControllerLevelTest {
         controllerLevel.checkCollisions(mockMario, mockObjects, mockCamera);
 
         verify(controllerLevel, times(1)).CheckPhysicalCollisionsY(mockPhysicalObject, mockObjects);
+    }
+
+    @Test
+    void testCheckPhysicalCollisionsY_BlockBelow() {
+        PhysicalObject physicalObject = mock(PhysicalObject.class);
+        BuildingBlock block = mock(BuildingBlock.class);
+
+        when(physicalObject.getX()).thenReturn(5.0f);
+        when(physicalObject.getWidth()).thenReturn(2.0f);
+        when(physicalObject.getY()).thenReturn(3.0f);
+        when(block.getX()).thenReturn(4.0f);
+        when(block.getWidth()).thenReturn(3.0f);
+        when(block.getY()).thenReturn(4.0f);
+        when(block.getHeight()).thenReturn(1.0f);
+
+        List<GameObject> objects = new ArrayList<>();
+        objects.add(block);
+
+        controllerLevel.CheckPhysicalCollisionsY(physicalObject, objects);
+
+        verify(physicalObject, never()).setFalling(true);
+    }
+
+    @Test
+    void testCheckPhysicalCollisionsY_NoBlockBelow() {
+        PhysicalObject physicalObject = mock(PhysicalObject.class);
+        BuildingBlock block = mock(BuildingBlock.class);
+
+        when(physicalObject.getX()).thenReturn(5.0f);
+        when(physicalObject.getWidth()).thenReturn(2.0f);
+        when(physicalObject.getY()).thenReturn(3.0f);
+        when(block.getX()).thenReturn(8.0f);
+        when(block.getWidth()).thenReturn(3.0f);
+        when(block.getY()).thenReturn(4.0f);
+        when(block.getHeight()).thenReturn(1.0f);
+
+        List<GameObject> objects = new ArrayList<>();
+        objects.add(block);
+
+        controllerLevel.CheckPhysicalCollisionsY(physicalObject, objects);
+
+        verify(physicalObject, times(1)).setFalling(true);
+    }
+
+    @Test
+    void testCheckPhysicalCollisionsY_JumpingObject() {
+        PhysicalObject physicalObject = mock(PhysicalObject.class);
+        GameObject object = mock(GameObject.class);
+
+        when(physicalObject.getVy()).thenReturn(1.0f);
+        when(physicalObject.isJumping()).thenReturn(true);
+        when(physicalObject.getY()).thenReturn(10.0f);
+        when(physicalObject.collidesWith(object)).thenReturn(true);
+
+        List<GameObject> objects = new ArrayList<>();
+        objects.add(object);
+
+        controllerLevel.CheckPhysicalCollisionsY(physicalObject, objects);
+
+        verify(physicalObject, atLeastOnce()).collidesWith(object);
+        verify(physicalObject, atLeastOnce()).handleCollision(object, 'U');
     }
 }
