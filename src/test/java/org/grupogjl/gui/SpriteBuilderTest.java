@@ -49,10 +49,13 @@ class SpriteBuilderTest {
 
     @Test
     void testLoad_ImageResourceNotFound() {
-        BufferedImage loadedImage = spriteBuilder.loadImage("nonexistent.png");
+        SpriteBuilder spriteBuilderSpy = Mockito.spy(spriteBuilder);
+        Mockito.doReturn(null).when(spriteBuilderSpy).getClass().getResource("/Sprites/nonexistent.png");
+
+        BufferedImage loadedImage = spriteBuilderSpy.loadImage("nonexistent.png");
 
         assertNull(loadedImage);
-        assertFalse(spriteBuilder.isInCache("nonexistent.png"));
+        assertFalse(spriteBuilderSpy.isInCache("nonexistent.png"));
     }
 
     @Test
