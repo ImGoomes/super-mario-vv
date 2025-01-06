@@ -190,4 +190,53 @@ class PhysicalObjectTest {
         assertEquals(newGravity, physicalObject.getG(),
                 "Gravity value should be modifiable");
     }
+
+    @Test
+    void testCollidesWith_StaticObject() {
+        GameObject staticGameObject = mockStaticObject;
+
+        when(mockStaticObject.getX()).thenReturn(110f);
+        when(mockStaticObject.getY()).thenReturn(110f);
+        assertTrue(physicalObject.collidesWith(staticGameObject),
+                "Should detect collision with static object");
+
+        when(mockStaticObject.getX()).thenReturn(300f);
+        when(mockStaticObject.getY()).thenReturn(300f);
+        assertFalse(physicalObject.collidesWith(staticGameObject),
+                "Should not detect collision with static object");
+    }
+
+    @Test
+    void testCollidesWith_PhysicalObject() {
+        GameObject physicalGameObject = mockPhysicalObject;
+
+        when(mockPhysicalObject.getX()).thenReturn(110f);
+        when(mockPhysicalObject.getY()).thenReturn(110f);
+        assertTrue(physicalObject.collidesWith(physicalGameObject),
+                "Should detect collision with physical object");
+
+        when(mockPhysicalObject.getX()).thenReturn(300f);
+        when(mockPhysicalObject.getY()).thenReturn(300f);
+        assertFalse(physicalObject.collidesWith(physicalGameObject),
+                "Should not detect collision with physical object");
+    }
+
+    @Test
+    void testCollidesWithPhysical_BoundaryConditions() {
+        when(mockPhysicalObject.getX()).thenReturn(120f);
+        when(mockPhysicalObject.getY()).thenReturn(120f);
+        assertFalse(physicalObject.collidesWithPhysical(mockPhysicalObject, 0f, 0f),
+                "Should not detect collision at the boundary");
+
+        when(mockPhysicalObject.getX()).thenReturn(121f);
+        when(mockPhysicalObject.getY()).thenReturn(121f);
+        assertFalse(physicalObject.collidesWithPhysical(mockPhysicalObject, 0f, 0f),
+                "Should not detect collision just outside the boundary");
+
+        assertFalse(physicalObject.collidesWithPhysical(mockPhysicalObject, 1f, 1f),
+                "Should not detect collision with offset");
+
+        assertTrue(physicalObject.collidesWithPhysical(mockPhysicalObject, 2f, 2f),
+                "Should detect collision with offset just outside the boundary");
+    }
 }
